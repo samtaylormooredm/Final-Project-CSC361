@@ -1,0 +1,73 @@
+body {
+    font: 12px sans-serif;
+    background-color: #ffffff;
+    margin: 0;
+  }
+  
+  .title-container {
+    padding: 10px;
+    max-width: 960px;
+    margin-left: 40px;
+    margin: 40px;
+    text-align: left;
+  }
+  
+  .title-container h1 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .title-container p {
+    font-size: 16px;
+    color: #444;
+    line-height: 1.4;
+  }
+  
+  .play-icon {
+    font-weight: bold;
+    font-family: monospace;
+  }
+  
+  .controls {
+    position: relative;
+    top: 0;
+    left: 0;
+    padding: 10px;
+    max-width: 960px;
+    margin-left: 50px;
+    text-align: left;
+  }
+
+  .slider-container {
+    display: flex;
+    align-items: left;
+    justify-content: left;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  input[type="range"] {
+    width: 500px;
+  }
+  
+  button {
+    padding: 4px 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  #year-label {
+    font-size: 16px; 
+  }
+  
+  .tooltip {
+    position: absolute;
+    visibility: hidden;
+    padding: 8px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
