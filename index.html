@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Climate Concern Choropleth</title>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Title and instructions -->
+  <div class="title-container">
+    <h1>Estimated % of adults who are worried about global warming</h1>
+    <p>
+      Click and slide over the slider to see a map of each year. Click 
+      <span class="play-icon">▶</span> to see an animation of the state populations' opinions over time. 
+      Hover over each state to see a chart of the population's opinion over time.
+    </p>
+  </div>
+
+  <!-- Controls (Slider + Label + Play) -->
+  <div class="controls">
+    <div id="year-label">Year: </div>
+    <div class="slider-container">
+      <input type="range" id="year-slider">
+      <button id="play-button">▶ Play</button>
+    </div>
+  </div>
+
+  <!-- The map will be rendered into this SVG -->
+  <svg id="map" width="960" height="600">
+	<defs>
+		<filter id="glow">
+			<feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#FFFFED" flood-opacity="0.9"/>
+		  </filter>
+	  </defs>
+  </svg>
+
+  <!-- Tooltip -->
+  <div class="tooltip" id="tooltip"></div>
+
+  <!-- Main script -->
+  <script src="main.js"></script>
+</body>
+</html>
