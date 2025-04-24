@@ -36,8 +36,22 @@
 	  </defs>
   </svg>
 
+  <!-- Dedicated svg for the key -->
+  <div id="legend-container" style="position: absolute; top: 450px; right: 200px;"></div>
+
   <!-- Tooltip -->
-  <div class="tooltip" id="tooltip"></div>
+  <div id="tooltip" style="
+  position: absolute;
+  visibility: hidden;
+  background: white;
+  padding: 10px;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  pointer-events: none;
+  font-size: 14px;
+  z-index: 1000;
+"></div>
 
   <!-- Main script -->
   <script src="main.js"></script>
