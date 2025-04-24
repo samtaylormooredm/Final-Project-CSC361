@@ -7,6 +7,7 @@ var highColor = '#000068';
 
 var svg = d3.select("#map");
 
+
 // Define geographic projection for the US map
 var projection = d3.geoAlbersUsa()
   .translate([width / 2, height / 2])
@@ -26,6 +27,15 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       dataByYear[year][row.state] = +row[year];
     });
   });
+
+  var dataByState = {};
+dataRaw.forEach(row => {
+  let state = row.state;
+  dataByState[state] = years.map(year => ({
+    year: +year,
+    value: +row[year]
+  }));
+});
 
   var allValues = Object.values(dataByYear).flatMap(d => Object.values(d));
   // var minVal = d3.min(allValues);
@@ -52,34 +62,53 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .style("stroke", "#fff")
         .style("stroke-width", "1")
         .style("fill", d => ramp(d.properties.value))
-        .on("mouseover", function(d) {
-            // Highlight state on hover and apply glow
-            d3.select(this)
-              .raise()  // <--- Brings this element to front
-              .style("stroke", "#FFFFC5") // or any blue you like
-              .style("stroke-width", 2)
-              .style("filter", "url(#glow)");
-          
-            tooltip.style("visibility", "visible")
-                   .text(`${d.properties.name}: ${d.properties.value.toFixed(1)}%`);
-          })
-        .on("mousemove", function() {
-          tooltip.style("top", (d3.event.pageY - 10) + "px")
-                 .style("left", (d3.event.pageX + 10) + "px");
+        .on("mouseover", function(event, d) {
+          let state = d.properties.name;
+          let series = dataByState[state];
+        
+          d3.select("#tooltip-content").html(`
+            <div><strong>${state} (${currentYear})</strong></div>
+            <div>Worried about global warming: <strong>${d.properties.value}%</strong></div>
+            <svg width="220" height="60"></svg>
+          `);
+        
+          let svg = d3.select("#tooltip-content svg");
+          let margin = { top: 5, right: 5, bottom: 5, left: 5 };
+          let width = 220 - margin.left - margin.right;
+          let height = 60 - margin.top - margin.bottom;
+        
+          let x = d3.scaleLinear()
+            .domain(d3.extent(series, d => d.year))
+            .range([margin.left, width]);
+        
+          let y = d3.scaleLinear()
+            .domain([d3.min(series, d => d.value) - 5, d3.max(series, d => d.value) + 5])
+            .range([height, margin.top]);
+        
+          let line = d3.line()
+            .x(d => x(d.year))
+            .y(d => y(d.value));
+        
+          svg.append("path")
+            .datum(series)
+            .attr("fill", "none")
+            .attr("stroke", "#f28e2c")
+            .attr("stroke-width", 2)
+            .attr("d", line);
+        
+          // Optional: Highlight dot for current year
+          svg.append("circle")
+            .attr("cx", x(+currentYear))
+            .attr("cy", y(d.properties.value))
+            .attr("r", 3)
+            .attr("fill", "#f28e2c");
+        
+          tooltip.style("visibility", "visible");
         })
-        // Reset styling and hide tooltip when not hovering
-        .on("mouseout", function(d) {
-            d3.select(this)
-            .style("stroke", "#fff")
-            .style("stroke-width", 1)
-            .style("filter", null); // Remove glow effect
-
-  tooltip.style("visibility", "hidden");
-})
 
       states.exit().remove();
     }
-
+    
     // Render the initial map with the first year of data
     updateMap(years[0]);
 
@@ -128,9 +157,12 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
   .attr("height", legendHeight + 20)
   .attr("class", "legend")
   .style("position", "absolute")
-  .style("right", "800px")  // same horizontal position as before
-  .style("bottom", "200px");  // move this upward to shift the whole thing
-
+  // .style("right", "800px")  // same horizontal position as before
+  // .style("bottom", "200px");  // move this upward to shift the whole thing
+  var key = d3.select("#legend-container")
+  .append("svg")
+  .attr("width", legendWidth)
+  .attr("height", legendHeight + 20);
 
     var legend = key.append("defs")
       .append("linearGradient")
