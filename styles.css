@@ -1,73 +1,89 @@
+/* styles.css */
 body {
-    font: 12px sans-serif;
-    background-color: #e7ebef;
-    margin: 0;
-  }
-  
-  .title-container {
-    padding: 10px;
-    max-width: 960px;
-    margin-left: 40px;
-    margin: 40px;
-    text-align: left;
-  }
-  
-  .title-container h1 {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .title-container p {
-    font-size: 16px;
-    color: #444;
-    line-height: 1.4;
-  }
-  
-  .play-icon {
-    font-weight: bold;
-    font-family: monospace;
-  }
-  
-  .controls {
-    position: relative;
-    top: 0;
-    left: 0;
-    padding: 10px;
-    max-width: 960px;
-    margin-left: 50px;
-    text-align: left;
-  }
+  font: 12px sans-serif;
+  background-color: #e7ebef;
+  margin: 0;
+}
 
-  .slider-container {
-    display: flex;
-    align-items: left;
-    justify-content: left;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  input[type="range"] {
-    width: 500px;
-  }
-  
-  button {
-    padding: 4px 10px;
-    font-size: 14px;
-    cursor: pointer;
-  }
+.title-container {
+  padding: 10px;
+  max-width: 960px;
+  margin-left: 40px;
+  margin: 40px;
+  text-align: left;
+}
 
-  #year-label {
-    font-size: 16px; 
-  }
-  
-  .tooltip {
-    position: absolute;
-    visibility: hidden;
-    padding: 8px;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 12px;
-  }
-  
+.title-container h1 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.title-container p {
+  font-size: 16px;
+  color: #444;
+  line-height: 1.4;
+}
+
+.play-icon {
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.controls {
+  position: relative;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  max-width: 960px;
+  margin-left: 50px;
+  text-align: left;
+}
+
+.slider-container {
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+input[type="range"] {
+  width: 500px;
+}
+
+button {
+  padding: 4px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#year-label {
+  font-size: 16px;
+}
+
+.tooltip {
+  position: absolute;
+  visibility: hidden;
+  padding: 8px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.legend-bin {
+  cursor: pointer;
+  stroke-width: 1;
+  transition: stroke-width 0.2s;
+}
+
+.legend-bin:hover {
+  stroke-width: 3;
+  stroke: #333;
+}
+
+.legend-bin.active {
+  stroke-width: 3;
+  stroke: #333;
+}
