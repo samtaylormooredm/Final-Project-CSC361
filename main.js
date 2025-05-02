@@ -14,7 +14,6 @@ let currentYear;
 let selectedBins = new Set();
 let hoveredBin = null;
 
-// Load CSV data
 d3.csv("climate_worried_by_state.csv", function(dataRaw) {
   var years = d3.keys(dataRaw[0]).filter(k => k !== "state");
   var dataByYear = {};
@@ -108,19 +107,21 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       playing = !playing;
     });
 
-    // Legend
+    // Vertical Legend scaled to match map height
     const legendBins = d3.range(35, 75, 5).reverse();
-    const binHeight = 20;
+    const legendHeight = 350; // Match map height
+    const binHeight = legendHeight / legendBins.length;
+
     const legendSvg = d3.select("body").append("svg")
       .attr("width", 100)
-      .attr("height", legendBins.length * binHeight + 30)
+      .attr("height", legendHeight + 40)
       .style("position", "absolute")
       .style("right", "800px")
-      .style("bottom", "200px");
+      .style("top", "450px");
 
     legendBins.forEach((start, i) => {
       const end = start + 5;
-      const yPos = (legendBins.length - 1 - i) * binHeight + 10;
+      const yPos = i * binHeight;
 
       legendSvg.append("rect")
         .attr("x", 10)
@@ -156,9 +157,10 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
 
       legendSvg.append("text")
         .attr("x", 45)
-        .attr("y", yPos + 15)
+        .attr("y", yPos + binHeight / 2 + 4)
         .text(`${start}%–${end}%`)
-        .style("font-size", "12px");
+        .style("font-size", "12px")
+        .style("alignment-baseline", "middle");
     });
 
     // Add Clear Filters button
@@ -166,7 +168,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       .text("Clear All Filters")
       .style("position", "absolute")
       .style("right", "800px")
-      .style("bottom", "120px")
+      .style("top", "815px")
       .style("padding", "5px 10px")
       .on("click", () => {
         selectedBins.clear();
