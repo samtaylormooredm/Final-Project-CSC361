@@ -57,9 +57,18 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
           return ramp(val);
         })
         .on("mouseover", function(d) {
+          const val = d.properties.value;
+          const inSelected = selectedBins.size > 0 && Array.from(selectedBins).some(start => val >= start && val < start + 5);
+          const inHovered = hoveredBin !== null && val >= hoveredBin && val < hoveredBin + 5;
+        
+          // If filtering is active, only respond if this state is within the active bin
+          if (selectedBins.size > 0 && !inSelected) return;
+          if (hoveredBin !== null && selectedBins.size === 0 && !inHovered) return;
+        
           d3.select(this).raise().style("stroke", "#FFFFC5").style("stroke-width", 2).style("filter", "url(#glow)");
           tooltip.style("visibility", "visible").text(`${d.properties.name}: ${d.properties.value.toFixed(1)}%`);
         })
+        
         .on("mousemove", function() {
           tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
         })
