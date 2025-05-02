@@ -88,9 +88,11 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       .attr("value", 0)
       .on("input", function() {
         var year = years[this.value];
+        currentYear = year;
         updateMap(year);
         d3.select("#year-label").text(`Year: ${year}`);
       });
+      
 
     d3.select("#year-label").text(`Year: ${currentYear}`);
 
