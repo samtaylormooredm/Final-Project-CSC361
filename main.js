@@ -173,6 +173,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
     });
 
     // Add Clear Filters button
+    // Add Clear Filters button
     d3.select("body").append("button")
       .text("Clear All Filters")
       .style("position", "absolute")
@@ -182,7 +183,14 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       .on("click", () => {
         selectedBins.clear();
         d3.selectAll(".legend-bin").classed("active", false);
+      
+        // Get current slider value and update currentYear
+        const sliderValue = +d3.select("#year-slider").property("value");
+        currentYear = years[sliderValue];
+
         updateMap(currentYear);
-      });
+        d3.select("#year-label").text(`Year: ${currentYear}`);
+    });
+
   });
 });
