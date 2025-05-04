@@ -125,18 +125,18 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
     const legendHeight = 350; // Match map height
     const binHeight = legendHeight / legendBins.length;
 
-    const legendSvg = d3.select("body").append("svg")
-      .attr("width", 100)
-      .attr("height", legendHeight + 40)
-      .style("position", "absolute")
-      .style("right", "800px")
-      .style("top", "450px");
+    const legendGroup = svg.append("g")
+      .attr("id", "legend")
+      .attr("transform", `translate(${width - 100}, ${height / 2 - legendHeight / 2})`);
+
+
+    
 
     legendBins.forEach((start, i) => {
       const end = start + 5;
       const yPos = i * binHeight;
 
-      legendSvg.append("rect")
+      legendGroup.append("rect")
         .attr("x", 10)
         .attr("y", yPos)
         .attr("width", 30)
@@ -168,7 +168,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
           updateMap(currentYear);
         });
 
-      legendSvg.append("text")
+      legendGroup.append("text")
         .attr("x", 45)
         .attr("y", yPos + binHeight / 2 + 4)
         .text(`${start}%–${end}%`)
@@ -177,24 +177,26 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
     });
 
     // Add Clear Filters button
-    // Add Clear Filters button
-    d3.select("body").append("button")
+    svg.append("foreignObject")
+      .attr("x", width - 130)
+      .attr("y", height / 2 + legendHeight / 2 + 10) // just below the legend
+      .attr("width", 130)
+      .attr("height", 40)
+      .append("xhtml:button")
       .text("Clear All Filters")
-      .style("position", "absolute")
-      .style("right", "800px")
-      .style("top", "815px")
       .style("padding", "5px 10px")
+      .style("font-size", "14px")
+      .style("cursor", "pointer")
       .on("click", () => {
         selectedBins.clear();
         d3.selectAll(".legend-bin").classed("active", false);
-      
-        // Get current slider value and update currentYear
+
         const sliderValue = +d3.select("#year-slider").property("value");
         currentYear = years[sliderValue];
-
         updateMap(currentYear);
         d3.select("#year-label").text(`Year: ${currentYear}`);
     });
+
     function drawLineChart(stateName) {
       const years = Object.keys(dataByYear);
       const values = years.map(y => ({ year: +y, value: dataByYear[y][stateName] }));

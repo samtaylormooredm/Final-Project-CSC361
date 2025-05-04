@@ -75,3 +75,8 @@ button {
   stroke-width: 3;
   stroke: #333;
 }
+
+path {
+  cursor: pointer;
+}
+
