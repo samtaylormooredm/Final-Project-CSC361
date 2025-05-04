@@ -1,5 +1,5 @@
 body {
-  font: 16px sans-serif; /* slightly larger text */
+  font: 16px sans-serif; 
   background-color: #e2e2e2dc;
   margin: 0;
   padding: 0;
@@ -39,7 +39,7 @@ body {
 }
 
 input[type="range"] {
-  width: 600px; /* wider */
+  width: 600px; 
   height: 6px;
 }
 
@@ -94,8 +94,20 @@ path {
 #line-chart-container {
   background-color: #f5f5f5;
   border-radius: 8px;
-  padding: 10px;
-  display: inline-block; /* shrinks to fit contents */
-  margin-top: 120px; /* <-- add this */
-  margin-left: 20px; /* <-- Add this line */
+  padding: 40px 10px 10px 10px;
+  display: inline-block;
+  margin-top: 120px;
+  margin-left: 20px;
+  height: 490px; /* 🔧 Add fixed height */
+  width: 710px;   /* 🔧 Add fixed width to keep it uniform */
+  position: relative; /* 🔧 Allow absolute positioning inside */
+  box-sizing: border-box;
+}
+
+#unselect-button {
+  position: absolute; /* 🔧 Prevents it from expanding the box */
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
 }
