@@ -27,16 +27,21 @@
     </div>
   </div>
 
+  <!-- Map and Chart Layout -->
+<div class="map-chart-wrapper">
   <!-- The map will be rendered into this SVG -->
   <svg id="map" width="960" height="600">
-	<defs>
-		<filter id="glow">
-			<feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#FFFFED" flood-opacity="0.9"/>
-		  </filter>
-	  </defs>
+    <defs>
+      <filter id="glow">
+        <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#FFFFED" flood-opacity="0.9"/>
+      </filter>
+    </defs>
   </svg>
+
   <!-- Line Chart Container -->
-  <div id="line-chart-container" style="width: 700px; height: 400px; margin: 40px auto;"></div>
+  <div id="line-chart-container"></div>
+</div>
+
 
   <!-- Tooltip -->
   <div class="tooltip" id="tooltip"></div>
