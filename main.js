@@ -1,12 +1,11 @@
-// main.js
-
 var width = 960;
 var height = 600;
 var lowColor = '#f0f8ff';
 var highColor = '#000068';
 
 var svg = d3.select("#map");
-var projection = d3.geoAlbersUsa().translate([width / 2, height / 2]).scale([1000]);
+var projection = d3.geoAlbersUsa().translate([width / 2, height / 2]).scale([1320]);
+
 var path = d3.geoPath().projection(projection);
 var tooltip = d3.select("#tooltip");
 
@@ -127,7 +126,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
 
     const legendGroup = svg.append("g")
       .attr("id", "legend")
-      .attr("transform", `translate(${width - 100}, ${height / 2 - legendHeight / 2})`);
+      .attr("transform", `translate(${width - 20}, ${height / 2 - legendHeight / 2 + 15})`);
 
 
     
@@ -170,16 +169,16 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
 
       legendGroup.append("text")
         .attr("x", 45)
-        .attr("y", yPos + binHeight / 2 + 4)
-        .text(`${start}%–${end}%`)
+        .attr("y", yPos) // shift closer to the top edge of each bin
+        .text(`${end}%`)     // show only the top value
         .style("font-size", "12px")
-        .style("alignment-baseline", "middle");
+        .style("alignment-baseline", "hanging");
     });
 
     // Add Clear Filters button
     svg.append("foreignObject")
-      .attr("x", width - 130)
-      .attr("y", height / 2 + legendHeight / 2 + 10) // just below the legend
+      .attr("x", width - 50)
+      .attr("y", height / 2 + legendHeight / 2 + 25) // just below the legend
       .attr("width", 130)
       .attr("height", 40)
       .append("xhtml:button")
@@ -204,7 +203,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       d3.select("#line-chart-container").html(""); // clear existing chart
     
       const margin = { top: 40, right: 30, bottom: 50, left: 60 };
-      const width = 700 - margin.left - margin.right;
+      const width = 650 - margin.left - margin.right;
       const height = 400 - margin.top - margin.bottom;
     
       const svgLine = d3.select("#line-chart-container")
