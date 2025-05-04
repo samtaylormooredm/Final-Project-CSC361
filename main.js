@@ -75,7 +75,11 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .on("mouseout", function(d) {
           d3.select(this).style("stroke", "#fff").style("stroke-width", 1).style("filter", null);
           tooltip.style("visibility", "hidden");
+        })
+        .on("click", function(d) {
+          drawLineChart(d.properties.name);
         });
+        
 
       states.exit().remove();
     }
@@ -92,10 +96,8 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         updateMap(year);
         d3.select("#year-label").text(`Year: ${year}`);
       });
-      
 
     d3.select("#year-label").text(`Year: ${currentYear}`);
-
     var playing = false;
     var interval;
     d3.select("#play-button").on("click", function() {
@@ -193,6 +195,82 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         updateMap(currentYear);
         d3.select("#year-label").text(`Year: ${currentYear}`);
     });
+    function drawLineChart(stateName) {
+      const years = Object.keys(dataByYear);
+      const values = years.map(y => ({ year: +y, value: dataByYear[y][stateName] }));
+    
+      d3.select("#line-chart-container").html(""); // clear existing chart
+    
+      const margin = { top: 40, right: 30, bottom: 50, left: 60 };
+      const width = 700 - margin.left - margin.right;
+      const height = 400 - margin.top - margin.bottom;
+    
+      const svgLine = d3.select("#line-chart-container")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+    
+      const x = d3.scaleLinear()
+        .domain(d3.extent(values, d => d.year))
+        .range([0, width]);
+    
+      const y = d3.scaleLinear()
+        .domain([0, 100])
+        .range([height, 0]);
+    
+      const line = d3.line()
+        .x(d => x(d.year))
+        .y(d => y(d.value));
+    
+      svgLine.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x).tickFormat(d3.format("d")));
+    
+      svgLine.append("g")
+        .call(d3.axisLeft(y));
+    
+      svgLine.append("path")
+        .datum(values)
+        .attr("fill", "none")
+        .attr("stroke", "#003366")
+        .attr("stroke-width", 2)
+        .attr("d", line);
+    
+      svgLine.selectAll(".dot")
+        .data(values)
+        .enter()
+        .append("circle")
+        .attr("cx", d => x(d.year))
+        .attr("cy", d => y(d.value))
+        .attr("r", 4)
+        .attr("fill", "#003366");
+    
+      svgLine.append("text")
+        .attr("x", width / 2)
+        .attr("y", -10)
+        .attr("text-anchor", "middle")
+        .style("font-size", "18px")
+        .style("font-weight", "bold")
+        .text(`% Worried About Global Warming in ${stateName}`);
+    
+      svgLine.append("text")
+        .attr("x", width / 2)
+        .attr("y", height + 40)
+        .attr("text-anchor", "middle")
+        .style("font-size", "14px")
+        .text("Year");
+    
+      svgLine.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -45)
+        .attr("x", -height / 2)
+        .attr("text-anchor", "middle")
+        .style("font-size", "14px")
+        .text("% Worried");
+    }
+    
 
   });
 });
