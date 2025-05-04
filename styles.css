@@ -26,7 +26,8 @@ body {
 }
 
 .controls {
-  padding: 20px 40px;
+  padding: 0 40px;
+  margin-top: -10px; 
   text-align: left;
 }
 
@@ -83,11 +84,11 @@ path {
 
 .map-chart-wrapper {
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 30px;
+  flex-direction: row;
+  align-items: flex-start; /* aligns the tops */
   padding: 40px;
 }
+
 
 /* Resize line chart area */
 #line-chart-container {
@@ -95,4 +96,6 @@ path {
   border-radius: 8px;
   padding: 10px;
   display: inline-block; /* shrinks to fit contents */
+  margin-top: 120px; /* <-- add this */
+  margin-left: 20px; /* <-- Add this line */
 }
