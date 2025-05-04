@@ -84,6 +84,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
     }
 
     updateMap(currentYear);
+    drawNationalAverage();
 
     var slider = d3.select("#year-slider")
       .attr("min", 0)
@@ -169,7 +170,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
 
       legendGroup.append("text")
         .attr("x", 45)
-        .attr("y", yPos) // shift closer to the top edge of each bin
+        .attr("y", yPos - 3) // shift closer to the top edge of each bin
         .text(`${end}%`)     // show only the top value
         .style("font-size", "12px")
         .style("alignment-baseline", "hanging");
@@ -198,9 +199,14 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
 
     function drawLineChart(stateName) {
       const years = Object.keys(dataByYear);
-      const values = years.map(y => ({ year: +y, value: dataByYear[y][stateName] }));
+      const stateValues = years.map(y => ({ year: +y, value: dataByYear[y][stateName] }));
+      const nationalAverage = getNationalAverageData();
     
-      d3.select("#line-chart-container").html(""); // clear existing chart
+      d3.select("#line-chart-container").html(""); // Clear
+
+      // Add "Unselect State" button below the chart
+      
+      
     
       const margin = { top: 40, right: 30, bottom: 50, left: 60 };
       const width = 650 - margin.left - margin.right;
@@ -214,33 +220,52 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("transform", `translate(${margin.left},${margin.top})`);
     
       const x = d3.scaleLinear()
-        .domain(d3.extent(values, d => d.year))
+        .domain(d3.extent(stateValues, d => d.year))
         .range([0, width]);
     
       const y = d3.scaleLinear()
         .domain([0, 100])
         .range([height, 0]);
     
-      const line = d3.line()
-        .x(d => x(d.year))
-        .y(d => y(d.value));
+      const line = d3.line().x(d => x(d.year)).y(d => y(d.value));
     
       svgLine.append("g")
         .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x).tickFormat(d3.format("d")));
-    
+        .call(d3.axisBottom(x).tickFormat(d3.format("d")))
+        .selectAll("text")
+        .style("font-size", "12px"); // Add this line
       svgLine.append("g")
-        .call(d3.axisLeft(y));
+        .call(d3.axisLeft(y))
+        .selectAll("text")
+        .style("font-size", "14px"); // Add this lin
     
+      // Blue national average line
       svgLine.append("path")
-        .datum(values)
+        .datum(nationalAverage)
+        .attr("fill", "none")
+        .attr("stroke", "#007BFF")
+        .attr("stroke-width", 2)
+        .attr("d", line);
+    
+      svgLine.selectAll(".dot-nat")
+        .data(nationalAverage)
+        .enter()
+        .append("circle")
+        .attr("cx", d => x(d.year))
+        .attr("cy", d => y(d.value))
+        .attr("r", 3)
+        .attr("fill", "#007BFF");
+    
+      // Selected state line
+      svgLine.append("path")
+        .datum(stateValues)
         .attr("fill", "none")
         .attr("stroke", "#003366")
         .attr("stroke-width", 2)
         .attr("d", line);
     
       svgLine.selectAll(".dot")
-        .data(values)
+        .data(stateValues)
         .enter()
         .append("circle")
         .attr("cx", d => x(d.year))
@@ -270,7 +295,101 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("text-anchor", "middle")
         .style("font-size", "14px")
         .text("% Worried");
+      
+      d3.select("#line-chart-container")
+        .append("div")
+        .attr("id", "unselect-wrapper")
+        .style("text-align", "center")
+        .style("margin-top", "16px")
+        .append("button")
+        .attr("id", "unselect-button")
+        .text("Unselect State")
+        .on("click", () => drawNationalAverage());
     }
+    
+
+    function getNationalAverageData() {
+      const years = Object.keys(dataByYear);
+      return years.map(year => {
+        const values = Object.values(dataByYear[year]);
+        const avg = d3.mean(values);
+        return { year: +year, value: avg };
+      });
+    }
+    
+    function drawNationalAverage() {
+      const values = getNationalAverageData();
+    
+      d3.select("#line-chart-container").html(""); // Clear
+    
+      const margin = { top: 40, right: 30, bottom: 50, left: 60 };
+      const width = 650 - margin.left - margin.right;
+      const height = 400 - margin.top - margin.bottom;
+
+    
+      const svgLine = d3.select("#line-chart-container")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+    
+      const x = d3.scaleLinear().domain(d3.extent(values, d => d.year)).range([0, width]);
+      const y = d3.scaleLinear().domain([0, 100]).range([height, 0]);
+    
+      const line = d3.line().x(d => x(d.year)).y(d => y(d.value));
+    
+      svgLine.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x).tickFormat(d3.format("d")))
+        .selectAll("text")
+        .style("font-size", "12px"); 
+
+      svgLine.append("g")
+        .call(d3.axisLeft(y))
+        .selectAll("text")
+        .style("font-size", "12px");
+    
+      svgLine.append("path")
+        .datum(values)
+        .attr("fill", "none")
+        .attr("stroke", "#007BFF")
+        .attr("stroke-width", 2)
+        .attr("d", line);
+    
+      svgLine.selectAll(".dot")
+        .data(values)
+        .enter()
+        .append("circle")
+        .attr("cx", d => x(d.year))
+        .attr("cy", d => y(d.value))
+        .attr("r", 3)
+        .attr("fill", "#007BFF");
+    
+      svgLine.append("text")
+        .attr("x", width / 2)
+        .attr("y", -10)
+        .attr("text-anchor", "middle")
+        .style("font-size", "18px")
+        .style("font-weight", "bold")
+        .text("% Worried About Global Warming (National Avg)");
+    
+      svgLine.append("text")
+        .attr("x", width / 2)
+        .attr("y", height + 40)
+        .attr("text-anchor", "middle")
+        .style("font-size", "14px")
+        .text("Year");
+    
+      svgLine.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -45)
+        .attr("x", -height / 2)
+        .attr("text-anchor", "middle")
+        .style("font-size", "14px")
+        .text("% Worried");
+    }
+    
     
 
   });
