@@ -76,7 +76,14 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
               .style("filter", "url(#hover-glow)");
           }
         
-          tooltip.style("visibility", "visible").text(`${d.properties.name}: ${val.toFixed(1)}%`);
+          const nationalAvg = d3.mean(Object.values(dataByYear[currentYear]));
+          const diff = val - nationalAvg;
+          const formattedDiff = (diff >= 0 ? "+" : "") + diff.toFixed(1);
+          tooltip
+            .style("visibility", "visible")
+            .style("color", "black") // force black text
+            .html(`${d.properties.name}: ${val.toFixed(1)}%<br>(${formattedDiff}% from National Avg)`);
+
         })
         
         .on("mousemove", function() {
@@ -142,6 +149,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       .attr("max", years.length - 1)
       .attr("value", 0)
       .on("input", function() {
+        clearSelectedState();
         var year = years[this.value];
         currentYear = year;
         updateMap(year);
@@ -313,7 +321,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("fill", "#007BFF")
         .style("cursor", "pointer")
         .on("mouseover", function(d) {
-          d3.select(this).attr("r", 6);
+          d3.select(this).attr("r", 7);
           tooltip
             .style("visibility", "visible")
             .style("color", "#007BFF")
@@ -328,11 +336,11 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         });
       
     
-      // Selected state line
+      // Yellow selected state line
       svgLine.append("path")
         .datum(stateValues)
         .attr("fill", "none")
-        .attr("stroke", "#003366")
+        .attr("stroke", "#FFD700")
         .attr("stroke-width", 2)
         .attr("d", line);
     
@@ -343,13 +351,13 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("cx", d => x(d.year))
         .attr("cy", d => y(d.value))
         .attr("r", 4)
-        .attr("fill", "#003366")
+        .attr("fill", "#FFD700")
         .style("cursor", "pointer")
         .on("mouseover", function(d) {
-          d3.select(this).attr("r", 6); // grow on hover
+          d3.select(this).attr("r", 7); // grow on hover
           tooltip
             .style("visibility", "visible")
-            .style("color", "#003366") // or "#007BFF" for national
+            .style("color", "#FFD700") 
             .text(`${d.year}: ${d.value.toFixed(1)}%`);
         })
         .on("mousemove", function() {
@@ -466,7 +474,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("fill", "#007BFF")
         .style("cursor", "pointer")
         .on("mouseover", function(d) {
-          d3.select(this).attr("r", 6); // grow on hover
+          d3.select(this).attr("r", 7); // grow on hover
           tooltip
             .style("visibility", "visible")
             .style("color", "#007BFF") // or "#" for national
