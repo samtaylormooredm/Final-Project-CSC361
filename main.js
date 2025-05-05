@@ -4,7 +4,7 @@ var lowColor = '#f0f8ff';
 var highColor = '#000068';
 
 var svg = d3.select("#map");
-var projection = d3.geoAlbersUsa().translate([width / 2, height / 2]).scale([1320]);
+var projection = d3.geoAlbersUsa().translate([width / 2, height / 2]).scale([1325]);
 
 var path = d3.geoPath().projection(projection);
 var tooltip = d3.select("#tooltip");
@@ -89,34 +89,36 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         })
         
         .on("click", function(d) {
+          if (playing) {
+            // Show warning popup
+            const popup = d3.select("#popup-warning");
+            popup.style("display", "block");
+            setTimeout(() => popup.style("display", "none"), 2500); // auto-hide after 2.5s
+            return;
+          }
+        
           const clickedState = d.properties.name;
         
           if (selectedStateName === clickedState) {
-            // Deselect state
             selectedStateName = null;
             drawNationalAverage();
           } else {
-            // Select new state
             selectedStateName = clickedState;
             drawLineChart(clickedState);
           }
         
-          // Reset all states: remove styles AND class
           mapGroup.selectAll("path")
             .classed("selected", false)
             .style("stroke", "#fff")
             .style("stroke-width", 1)
             .style("filter", null);
         
-          // Re-style selected state
           if (selectedStateName !== null) {
             const selected = mapGroup.selectAll("path")
-            .filter(d => d.properties.name === selectedStateName)
-            .classed("selected", true);
-
-          // Make sure selected state is on top after all other styles
-          selected.raise()
-              .style("filter", "url(#selected-glow)");
+              .filter(d => d.properties.name === selectedStateName)
+              .classed("selected", true);
+        
+            selected.raise().style("filter", "url(#selected-glow)");
           }
         });
       states.exit().remove();
@@ -162,12 +164,12 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
 
     // Vertical Legend scaled to match map height
     const legendBins = d3.range(35, 75, 5).reverse();
-    const legendHeight = 350; // Match map height
+    const legendHeight = 240; // Match map height
     const binHeight = legendHeight / legendBins.length;
 
     const legendGroup = svg.append("g")
       .attr("id", "legend")
-      .attr("transform", `translate(${width - 20}, ${height / 2 - legendHeight / 2 + 15})`);
+      .attr("transform", `translate(${width - 50}, ${height / 2 - legendHeight / 2 + 50})`);
 
 
     
@@ -208,6 +210,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
             d3.select(this).classed("active", true);
           }
           updateMap(currentYear);
+          updateClearFiltersButtonState();
         });
 
       legendGroup.append("text")
@@ -220,11 +223,14 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
 
     // Add Clear Filters button
     svg.append("foreignObject")
-      .attr("x", width - 50)
-      .attr("y", height / 2 + legendHeight / 2 + 25) // just below the legend
+      .attr("x", width - 80)
+      .attr("y", height / 2 + legendHeight / 2 + 60) // just below the legend
       .attr("width", 130)
       .attr("height", 40)
       .append("xhtml:button")
+      .attr("id", "clear-filters-button") 
+        .attr("disabled", true)
+        .style("cursor", "not-allowed")
       .text("Clear All Filters")
       .style("padding", "5px 10px")
       .style("font-size", "14px")
@@ -237,7 +243,13 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         currentYear = years[sliderValue];
         updateMap(currentYear);
         d3.select("#year-label").text(`Year: ${currentYear}`);
-    });
+
+        // Disable button after clearing
+        d3.select("#clear-filters-button")
+          .attr("disabled", true)
+          .style("cursor", "not-allowed");
+      });
+
 
     function drawLineChart(stateName) {
       const years = Object.keys(dataByYear);
@@ -324,7 +336,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("x", width / 2)
         .attr("y", height + 40)
         .attr("text-anchor", "middle")
-        .style("font-size", "14px")
+        .style("font-size", "16px")
         .text("Year");
     
       svgLine.append("text")
@@ -332,17 +344,21 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("y", -45)
         .attr("x", -height / 2)
         .attr("text-anchor", "middle")
-        .style("font-size", "14px")
+        .style("font-size", "16px")
         .text("% Worried");
       
-      d3.select("#line-chart-container")
+        // Add unselect button outside the SVG (under the chart)
+        d3.select("#line-chart-container")
         .append("div")
         .attr("id", "unselect-wrapper")
         .style("text-align", "center")
-        .style("margin-top", "16px")
+        .style("margin-top", "12px")
         .append("button")
         .attr("id", "unselect-button")
         .text("Unselect State")
+        .style("padding", "6px 14px")
+        .style("font-size", "14px")
+        .style("cursor", "pointer")
         .on("click", () => {
           selectedStateName = null;
           drawNationalAverage();
@@ -351,6 +367,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
             .style("stroke-width", 1)
             .style("filter", null);
         });
+
     }
     
 
@@ -366,7 +383,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
     function drawNationalAverage() {
       const values = getNationalAverageData();
     
-      d3.select("#line-chart-container").html(""); // Clear
+      d3.select("#line-chart-container").html(""); 
     
       const margin = { top: 40, right: 30, bottom: 50, left: 60 };
       const width = 650 - margin.left - margin.right;
@@ -389,12 +406,12 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d3.format("d")))
         .selectAll("text")
-        .style("font-size", "12px"); 
+        .style("font-size", "14px"); 
 
       svgLine.append("g")
         .call(d3.axisLeft(y))
         .selectAll("text")
-        .style("font-size", "12px");
+        .style("font-size", "14px");
     
       svgLine.append("path")
         .datum(values)
@@ -418,13 +435,13 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("text-anchor", "middle")
         .style("font-size", "18px")
         .style("font-weight", "bold")
-        .text("% Worried About Global Warming (National Avg)");
+        .text("% Worried About Global Warming: National Avg");
     
       svgLine.append("text")
         .attr("x", width / 2)
         .attr("y", height + 40)
         .attr("text-anchor", "middle")
-        .style("font-size", "14px")
+        .style("font-size", "16px")
         .text("Year");
     
       svgLine.append("text")
@@ -432,8 +449,21 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("y", -45)
         .attr("x", -height / 2)
         .attr("text-anchor", "middle")
-        .style("font-size", "14px")
+        .style("font-size", "16px")
         .text("% Worried");
+      
+      d3.select("#line-chart-container")
+        .append("div")
+        .attr("id", "unselect-wrapper")
+        .style("text-align", "center")
+        .style("margin-top", "12px")
+        .append("button")
+        .attr("id", "unselect-button")
+        .text("Unselect State")
+        .attr("disabled", true) // disable button when no state is selected
+        .style("padding", "6px 14px")
+        .style("font-size", "14px")
+        .style("cursor", "not-allowed");
     }
     
     function clearSelectedState() {
@@ -444,6 +474,16 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .style("stroke-width", 1)
         .style("filter", null);
     }
+
+    function updateClearFiltersButtonState() {
+      const button = d3.select("#clear-filters-button");
+      if (selectedBins.size === 0) {
+        button.attr("disabled", true).style("cursor", "not-allowed");
+      } else {
+        button.attr("disabled", null).style("cursor", "pointer");
+      }
+    }
+    
 
   });
 });
