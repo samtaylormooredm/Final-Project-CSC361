@@ -309,8 +309,24 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .append("circle")
         .attr("cx", d => x(d.year))
         .attr("cy", d => y(d.value))
-        .attr("r", 3)
-        .attr("fill", "#007BFF");
+        .attr("r", 4)
+        .attr("fill", "#007BFF")
+        .style("cursor", "pointer")
+        .on("mouseover", function(d) {
+          d3.select(this).attr("r", 6);
+          tooltip
+            .style("visibility", "visible")
+            .style("color", "#007BFF")
+            .text(`${d.year}: ${d.value.toFixed(1)}%`);
+        })
+        .on("mousemove", function() {
+          tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", function() {
+          d3.select(this).attr("r", 4);
+          tooltip.style("visibility", "hidden");
+        });
+      
     
       // Selected state line
       svgLine.append("path")
@@ -326,8 +342,24 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .append("circle")
         .attr("cx", d => x(d.year))
         .attr("cy", d => y(d.value))
-        .attr("r", 3)
-        .attr("fill", "#003366");
+        .attr("r", 4)
+        .attr("fill", "#003366")
+        .style("cursor", "pointer")
+        .on("mouseover", function(d) {
+          d3.select(this).attr("r", 6); // grow on hover
+          tooltip
+            .style("visibility", "visible")
+            .style("color", "#003366") // or "#007BFF" for national
+            .text(`${d.year}: ${d.value.toFixed(1)}%`);
+        })
+        .on("mousemove", function() {
+          tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", function() {
+          d3.select(this).attr("r", 4); // reset to original size
+          tooltip.style("visibility", "hidden");
+        });
+        
     
       svgLine.append("text")
         .attr("x", width / 2)
@@ -430,8 +462,23 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .append("circle")
         .attr("cx", d => x(d.year))
         .attr("cy", d => y(d.value))
-        .attr("r", 3)
-        .attr("fill", "#007BFF");
+        .attr("r", 4)
+        .attr("fill", "#007BFF")
+        .style("cursor", "pointer")
+        .on("mouseover", function(d) {
+          d3.select(this).attr("r", 6); // grow on hover
+          tooltip
+            .style("visibility", "visible")
+            .style("color", "#007BFF") // or "#" for national
+            .text(`${d.year}: ${d.value.toFixed(1)}%`);
+        })
+        .on("mousemove", function() {
+          tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", function() {
+          d3.select(this).attr("r", 4); // reset to original size
+          tooltip.style("visibility", "hidden");
+        });
     
       svgLine.append("text")
         .attr("x", width / 2)
