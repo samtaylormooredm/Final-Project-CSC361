@@ -11,6 +11,8 @@ let currentYear;
 let selectedBins = new Set();
 let hoveredBin = null;
 let selectedStateName = null;
+let legendHovered = false;
+
 
 d3.csv("climate_worried_by_state.csv", function(dataRaw) {
   var years = d3.keys(dataRaw[0]).filter(k => k !== "state");
@@ -203,16 +205,39 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("class", "legend-bin")
         .attr("data-bin", start)
         .on("mouseover", function() {
-          clearSelectedState();
+          legendHovered = true;
           hoveredBin = start;
+        
+          // Temporarily hide selected state visuals
+          if (selectedStateName) {
+            mapGroup.selectAll("path")
+              .filter(d => d.properties.name === selectedStateName)
+              .classed("selected", false)
+              .style("stroke", "#fff")
+              .style("stroke-width", 1)
+              .style("filter", null)
+              .style("fill", "#ffffff");
+          }
           d3.select(this).attr("stroke-width", 3);
           updateMap(currentYear);
         })
+        
         .on("mouseout", function() {
+          legendHovered = false;
           const thisBin = +d3.select(this).attr("data-bin");
           hoveredBin = null;
           if (!selectedBins.has(thisBin)) d3.select(this).attr("stroke-width", 1);
           updateMap(currentYear);
+        
+          // Restore selected state's visuals if it exists
+          if (selectedStateName) {
+            mapGroup.selectAll("path")
+              .filter(d => d.properties.name === selectedStateName)
+              .classed("selected", true)
+              .style("stroke", "#FFFFC5")
+              .style("stroke-width", 2.5)
+              .style("filter", "url(#selected-glow)");
+          }
         })
         .on("click", function() {
           clearSelectedState();
@@ -310,23 +335,34 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .attr("stroke", "#007BFF")
         .attr("stroke-width", 2)
         .attr("d", line);
-    
-      svgLine.selectAll(".dot-nat")
-        .data(nationalAverage)
-        .enter()
-        .append("circle")
-        .attr("cx", d => x(d.year))
-        .attr("cy", d => y(d.value))
-        .attr("r", 4)
-        .attr("fill", "#007BFF")
-        .style("cursor", "pointer")
-        .on("mouseover", function(d) {
-          d3.select(this).attr("r", 7);
-          tooltip
-            .style("visibility", "visible")
-            .style("color", "#007BFF")
-            .text(`${d.year}: ${d.value.toFixed(1)}%`);
-        })
+            
+              // First, create a quick lookup for national values by year
+        const natValueByYear = {};
+        nationalAverage.forEach(d => { natValueByYear[d.year] = d.value; });
+
+        svgLine.selectAll(".dot-nat")
+          .data(nationalAverage)
+          .enter()
+          .append("circle")
+          .attr("cx", d => x(d.year))
+          .attr("cy", d => y(d.value))
+          .attr("r", 4)
+          .attr("fill", "#007BFF")
+          .style("cursor", "pointer")
+          .on("mouseover", function(d) {
+            d3.select(this).attr("r", 7);
+            tooltip
+              .style("visibility", "visible")
+              .style("color", "#007BFF")
+              .text(`${d.year}: ${d.value.toFixed(1)}%`);
+          })
+          .on("mousemove", function() {
+            tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+          })
+          .on("mouseout", function() {
+            d3.select(this).attr("r", 4);
+            tooltip.style("visibility", "hidden");
+          })
         .on("mousemove", function() {
           tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
         })
@@ -337,28 +373,52 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       
     
       // Yellow selected state line
-      svgLine.append("path")
-        .datum(stateValues)
-        .attr("fill", "none")
-        .attr("stroke", "#FFD700")
-        .attr("stroke-width", 2)
-        .attr("d", line);
-    
+      // Create adjusted state values for line and dots
+const adjustedStateValues = stateValues.map(d => {
+  const natVal = natValueByYear[d.year];
+  const isOverlap = Math.abs(d.value - natVal) < 0.4;
+  const pixelOffset = isOverlap ? (d.value > natVal ? -5 : 5) : 0;
+  return {
+    ...d,
+    yOffset: pixelOffset
+  };
+});
+
+// Yellow selected state line (with adjusted offset)
+svgLine.append("path")
+  .datum(adjustedStateValues)
+  .attr("fill", "none")
+  .attr("stroke", "#FFD700")
+  .attr("stroke-width", 2)
+  .attr("d", d3.line()
+    .x(d => x(d.year))
+    .y(d => y(d.value) + d.yOffset)
+  );
+
+      // Yellow dots
       svgLine.selectAll(".dot")
-        .data(stateValues)
+        .data(adjustedStateValues)
         .enter()
         .append("circle")
         .attr("cx", d => x(d.year))
-        .attr("cy", d => y(d.value))
+        .attr("cy", d => y(d.value) + d.yOffset)
         .attr("r", 4)
         .attr("fill", "#FFD700")
         .style("cursor", "pointer")
         .on("mouseover", function(d) {
-          d3.select(this).attr("r", 7); // grow on hover
+          d3.select(this).attr("r", 7);
           tooltip
             .style("visibility", "visible")
-            .style("color", "#FFD700") 
+            .style("color", "#FFD700")
             .text(`${d.year}: ${d.value.toFixed(1)}%`);
+        })
+        .on("mousemove", function() {
+          tooltip.style("top", (d3.event.pageY - 10) + "px")
+                .style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", function() {
+          d3.select(this).attr("r", 4);
+          tooltip.style("visibility", "hidden");
         })
         .on("mousemove", function() {
           tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
