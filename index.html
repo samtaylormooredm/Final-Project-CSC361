@@ -32,8 +32,14 @@
   <!-- The map will be rendered into this SVG -->
   <svg id="map" width="1040" height="620">
     <defs>
-      <filter id="glow">
-        <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#FFFFED" flood-opacity="0.9"/>
+      <!-- Softer glow for hover -->
+      <filter id="hover-glow">
+        <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#FFFFED" flood-opacity="0.8"/>
+      </filter>
+    
+      <!-- Stronger glow for selected state -->
+      <filter id="selected-glow">
+        <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#FFD700" flood-opacity="1"/>
       </filter>
     </defs>
   </svg>

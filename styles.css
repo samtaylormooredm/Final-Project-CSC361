@@ -98,16 +98,23 @@ path {
   display: inline-block;
   margin-top: 120px;
   margin-left: 20px;
-  height: 490px; /* 🔧 Add fixed height */
-  width: 710px;   /* 🔧 Add fixed width to keep it uniform */
-  position: relative; /* 🔧 Allow absolute positioning inside */
+  height: 490px; 
+  width: 710px;  
+  position: relative;
   box-sizing: border-box;
 }
 
 #unselect-button {
-  position: absolute; /* 🔧 Prevents it from expanding the box */
+  position: absolute; 
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 14px;
+}
+
+path.selected {
+  fill: #F0E68C !important;
+  stroke: #FFFFC5;
+  stroke-width: 2.5;
+  filter: url(#selected-glow); /* more intense glow */
 }
