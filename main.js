@@ -2,13 +2,11 @@ var width = 960;
 var height = 600;
 var lowColor = '#f0f8ff';
 var highColor = '#000068';
-
 var svg = d3.select("#map");
 var projection = d3.geoAlbersUsa().translate([width / 2, height / 2]).scale([1325]);
 
 var path = d3.geoPath().projection(projection);
 var tooltip = d3.select("#tooltip");
-
 let currentYear;
 let selectedBins = new Set();
 let hoveredBin = null;
@@ -25,20 +23,15 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
   });
 
   currentYear = years[0];
-
-  var allValues = Object.values(dataByYear).flatMap(d => Object.values(d));
   var ramp = d3.scaleLinear().domain([35, 80]).range([lowColor, highColor]);
-
   d3.json("us-states.json", function(json) {
     var mapGroup = svg.append("g");
-
     function updateMap(year) {
       json.features.forEach(d => {
         d.properties.value = dataByYear[year][d.properties.name];
       });
 
       const states = mapGroup.selectAll("path").data(json.features);
-
       states.enter()
         .append("path")
         .merge(states)
@@ -65,7 +58,6 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
 
           if (selectedBins.size > 0) return matchesSelected ? ramp(val) : "#ffffff";
           if (hoveredBin !== null) return matchesHover ? ramp(val) : "#ffffff";
-
           return ramp(val);
         })
         .on("mouseover", function(d) {
@@ -117,7 +109,6 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
           }
         
           const clickedState = d.properties.name;
-        
           if (selectedStateName === clickedState) {
             selectedStateName = null;
             drawNationalAverage();
@@ -189,9 +180,6 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
     const legendGroup = svg.append("g")
       .attr("id", "legend")
       .attr("transform", `translate(${width - 50}, ${height / 2 - legendHeight / 2 + 50})`);
-
-
-    
 
     legendBins.forEach((start, i) => {
       const end = start + 5;
@@ -269,7 +257,6 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
           .style("cursor", "not-allowed");
       });
 
-
     function drawLineChart(stateName) {
       const years = Object.keys(dataByYear);
       const stateValues = years.map(y => ({ year: +y, value: dataByYear[y][stateName] }));
@@ -296,7 +283,6 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       const y = d3.scaleLinear()
         .domain([0, 100])
         .range([height, 0]);
-    
       const line = d3.line().x(d => x(d.year)).y(d => y(d.value));
     
       svgLine.append("g")
@@ -389,10 +375,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
             .style("stroke-width", 1)
             .style("filter", null);
         });
-
     }
-    
-
     function getNationalAverageData() {
       const years = Object.keys(dataByYear);
       return years.map(year => {
@@ -411,7 +394,6 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       const width = 650 - margin.left - margin.right;
       const height = 400 - margin.top - margin.bottom;
 
-    
       const svgLine = d3.select("#line-chart-container")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -506,7 +488,5 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         button.attr("disabled", null).style("cursor", "pointer");
       }
     }
-    
-
   });
 });
