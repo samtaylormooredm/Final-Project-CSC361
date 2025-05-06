@@ -14,6 +14,13 @@ let hoveredBin = null;
 let selectedStateName = null;
 let legendHovered = false;
 
+window.onload = function() {
+  document.getElementById("welcome-modal").style.display = "block";
+};
+document.getElementById("start-tour-btn").addEventListener("click", function() {
+  document.getElementById("welcome-modal").style.display = "none";
+  introJs().start();
+});
 
 d3.csv("climate_worried_by_state.csv", function(dataRaw) {
   var years = d3.keys(dataRaw[0]).filter(k => k !== "state");
