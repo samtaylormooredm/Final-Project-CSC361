@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>Climate Concern Choropleth</title>
   <script src="https://d3js.org/d3.v4.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -28,14 +29,17 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
   <div class="controls">
     <div id="year-label">Year: </div>
     <div class="slider-container">
-      <input type="range" id="year-slider">
-      <button id="play-button">▶ Play</button>
+      <input type="range" id="year-slider" data-intro="Click and slide over the slider to see a map of each year" data-title="Year Selector" data-step="1">
+      <button id="play-button" data-title="Play Button" data-intro="Click here to see an animation of the state populations' opinions over time." data-step="2">▶ Play</button>
     </div>
   </div>
 
   <!-- Map and Chart Layout -->
   <div class="map-chart-wrapper">
-    <div id="map-container">
+    <div id="map-container"
+    data-intro="Hover over any state to see its data. Click a state to view its trend."
+    data-step="3">
+    
       <svg id="map" width="800" height="500">
         <defs>
           <!-- Softer glow for hover -->
@@ -50,10 +54,17 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
         </defs>
       </svg>
     </div>
-    <div id="legend-container">
+    <div id="legend-container"
+    data-title="Color Legend"
+     data-intro="These color bins represent percentage ranges. Click to filter."
+     data-step="4">
+
       <!-- Legend will go here using D3 -->
     </div>
-    <div id="line-chart-container">
+    <div id="line-chart-container"
+    data-title="Trend View"
+     data-intro="Clicking a state shows its opinion trend here over time."
+     data-step="5">
       <!-- Line chart renders here -->
     </div>
     </div>
@@ -84,6 +95,6 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
   Pause animation to select a state.
 </div>
 
-<script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
 </body>
 </html>
