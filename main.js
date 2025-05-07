@@ -194,19 +194,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       }
       playing = !playing;
     });
-  //   const tickContainer = d3.select("#slider-ticks");
-  //   tickContainer.selectAll("div")
-  //     .data(years)
-  //     .enter()
-  //     .append("div")
-  //     .attr("class", "tick-mark")
-  //     .style("--tick-height", (d, i) => i % 5 === 0 ? "16px" : "8px")
-  // .text((d, i) => i % 2 === 0 ? d : "")
-  //     .text((d, i) => {
-  //       // Show fewer labels for space — e.g., every 2nd or 5th year
-  //       return i % 2 === 0 ? d : ""; 
-        
-  //     });
+
     const containerHeight = document.getElementById('map').getBoundingClientRect().height;
     const legendHeight = Math.max(300, containerHeight * 0.85); // Scale with map, but minimum 300px
 
