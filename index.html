@@ -31,7 +31,7 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
   <div class="controls">
     <div id="year-label">Year: </div>
     <div class="slider-container">
-      <input type="range" id="year-slider" alt="A slider that allows the user to click and slide over the slider to see a map of each year" data-intro="Click and slide over the slider to see a map of each year" data-title="Year Selector" data-step="1">
+      <input type="range" aria-label="year-slider" ="year-slider" alt="A slider that allows the user to click and slide over the slider to see a map of each year" data-intro="Click and slide over the slider to see a map of each year" data-title="Year Selector" data-step="1">
       <button id="play-button" data-title="Play Button" data-intro="Click here to see an animation of the state populations' opinions over time." data-step="2">▶ Play</button>
     </div>
     <div id="slider-ticks"></div>
@@ -60,7 +60,7 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
         </defs>
       </svg>
     </div>
-    <div id="legend-wrapper"
+    <div id="legend-wrapper" alt="A color legend that ranges from 40% to 75%, indicating the percentage of folks who reported being worried in that state"
     style="flex: 1 1 15%; min-width: 150px; display: flex; flex-direction: column; align-items: center; gap: 10px;"
     data-title="Color Legend"
     data-intro="These color bins represent percentage ranges. Click to filter."
@@ -78,6 +78,7 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
 </div>
 
 <div id="line-chart-container"
+alt="This is a line chart that compares the selected state's percentage of worried citizens over 2010-2024"
     style="flex: 1 1 100%; margin-top: 20px;"
     data-title="Trend View"
     data-intro="Clicking a state shows its opinion trend here over time."
