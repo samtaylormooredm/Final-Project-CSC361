@@ -1,10 +1,14 @@
-var width = 550;
-var height = 400;
+// var width = 550;
+// var height = 400;
 var lowColor = '#f0f8ff';
 var highColor = '#000068';
 var svg = d3.select("#map");
-var projection = d3.geoAlbersUsa().translate([width / 1.85, height / 1.9]).scale([800]);
+var width = 600; // shrink from 550
+var height = 360; // optional to match chart scale
 
+var projection = d3.geoAlbersUsa()
+  .translate([width / 2, height / 2]) // center map more symmetrically
+  .scale([800]); // scale down
 
 var path = d3.geoPath().projection(projection);
 var tooltip = d3.select("#tooltip");
@@ -194,93 +198,229 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       }
       playing = !playing;
     });
+  //   const tickContainer = d3.select("#slider-ticks");
+  //   tickContainer.selectAll("div")
+  //     .data(years)
+  //     .enter()
+  //     .append("div")
+  //     .attr("class", "tick-mark")
+  //     .style("--tick-height", (d, i) => i % 5 === 0 ? "16px" : "8px")
+  // .text((d, i) => i % 2 === 0 ? d : "")
+  //     .text((d, i) => {
+  //       // Show fewer labels for space — e.g., every 2nd or 5th year
+  //       return i % 2 === 0 ? d : ""; 
+        
+  //     });
+    // const containerHeight = document.getElementById('map').getBoundingClientRect().height;
+    // const legendHeight = Math.max(300, containerHeight * 0.85); // Scale with map, but minimum 300px
+    // const legendWidth = 300;
+    // const legendBins = d3.range(35, 75, 5).reverse();
 
-    const containerHeight = document.getElementById('map').getBoundingClientRect().height;
-    const legendHeight = Math.max(300, containerHeight * 0.85); // Scale with map, but minimum 300px
+//     const legendBins = d3.range(35, 80, 5); // left to right
+//     const legendWidth = 300;
+//     const binWidth = legendWidth / legendBins.length;
+//     // const binWidth = legendWidth / legendBins.length;
 
-    // // Vertical Legend scaled to match map height
-    const legendBins = d3.range(35, 75, 5).reverse();
-    // const legendHeight = 400; // Match map height
-    const binHeight = legendHeight / legendBins.length;
+//     // // Vertical Legend scaled to match map height
+//     const legendHeight = 400; // Match map height
+//     const binHeight = legendHeight / legendBins.length;
 
-    const legendSvg = d3.select("#legend-container")
-    .append("svg")
-    .attr("width", 100) // slightly wider
-    .attr("height", legendHeight + 60); // space for top padding
+//     // const legendSvg = d3.select("#legend-container")
+//     // .append("svg")
+//     // .attr("width", legendWidth) // slightly wider
+//     // .attr("height", 60); // space for top padding
+//     const legendSvg = d3.select("#legend-container")
+//   .append("svg")
+//   .attr("width", legendWidth)
+//   .attr("height", 50); // horizontal, so not tall
   
 
+// // const legendGroup = legendSvg.append("g")
+// //   .attr("transform", `translate(-15, 30)`);
+// const legendGroup = legendSvg.append("g")
+//   .attr("transform", `translate(0, 10)`);
+
+
+//     // legendBins.forEach((start, i) => {
+//     //   const end = start + 5;
+//     //   const yPos = i * binHeight;
+//     legendBins.forEach((start, i) => {
+//       const end = start + 5;
+    
+
+//       // legendGroup.append("rect")
+//       //   .attr("x", i * binWidth)
+//       //   .attr("y", 10)
+//       //   .attr("width", binWidth)
+//       //   .attr("height", 20)
+//       //   .attr("fill", ramp((start + end) / 2))
+//       //   .attr("stroke", "black")
+//       //   .attr("class", "legend-bin")
+//       //   .attr("data-bin", start)
+//       //   .on("mouseover", function() {
+//       //     legendHovered = true;
+//       //     hoveredBin = start;
+//       legendGroup.append("rect")
+//       .attr("x", i * binWidth)
+//       .attr("y", 0)
+//       .attr("width", binWidth)
+//       .attr("height", 20)
+//       .attr("fill", ramp((start + end) / 2))
+//       .attr("stroke", "black")
+//       .attr("class", "legend-bin")
+//       .attr("data-bin", start)
+//       .on("mouseover", function () { /* ... existing logic ... */ })
+//       .on("mouseout", function () { /* ... existing logic ... */ })
+//       .on("click", function () { /* ... existing logic ... */ });
+  
+        
+//           // Temporarily hide selected state visuals
+//           if (selectedStateName) {
+//             mapGroup.selectAll("path")
+//               .filter(d => d.properties.name === selectedStateName)
+//               .classed("selected", false)
+//               .style("stroke", "#fff")
+//               .style("stroke-width", 1)
+//               .style("filter", null)
+//               .style("fill", "#ffffff");
+//           }
+//           d3.select(this).attr("stroke-width", 3);
+//           updateMap(currentYear);
+//         })
+        
+//         .on("mouseout", function() {
+//           legendHovered = false;
+//           const thisBin = +d3.select(this).attr("data-bin");
+//           hoveredBin = null;
+//           if (!selectedBins.has(thisBin)) d3.select(this).attr("stroke-width", 1);
+//           updateMap(currentYear);
+        
+//           // Restore selected state's visuals if it exists
+//           if (selectedStateName) {
+//             mapGroup.selectAll("path")
+//               .filter(d => d.properties.name === selectedStateName)
+//               .classed("selected", true)
+//               .style("stroke", "#FFFFC5")
+//               .style("stroke-width", 2.5)
+//               .style("filter", "url(#selected-glow)");
+//           }
+//         })
+//         .on("click", function() {
+//           clearSelectedState();
+//           const thisBin = +d3.select(this).attr("data-bin");
+//           if (selectedBins.has(thisBin)) {
+//             selectedBins.delete(thisBin);
+//             d3.select(this).classed("active", false);
+//           } else {
+//             selectedBins.add(thisBin);
+//             d3.select(this).classed("active", true);
+//           }
+//           updateMap(currentYear);
+//           updateClearFiltersButtonState();
+//         });
+
+//       // legendGroup.append("text")
+//       //   .attr("x", i * binWidth + binWidth/2)
+//       //   .attr("y", 45) // shift closer to the top edge of each bin
+//       //   .attr("text-anchor", "middle")
+//       //   .text(`${end}%`)     // show only the top value
+//       //   .style("font-size", "14px")
+//       //   .style("alignment-baseline", "hanging");
+//       legendGroup.append("text")
+//       .attr("x", i * binWidth + binWidth / 2)
+//       .attr("y", 35)
+//       .attr("text-anchor", "middle")
+//       .style("font-size", "12px")
+//       .text(`${end}%`);
+  
+      
+//     });
+const legendBins = d3.range(35, 80, 5); // left to right
+const legendWidth = 300;
+const binWidth = legendWidth / legendBins.length;
+
+const legendSvg = d3.select("#legend-container")
+  .append("svg")
+  .attr("width", legendWidth)
+  .attr("height", 50); // horizontal layout, short height
+
 const legendGroup = legendSvg.append("g")
-  .attr("transform", `translate(-15, 30)`);
+  .attr("transform", `translate(0, 10)`);
 
-    legendBins.forEach((start, i) => {
-      const end = start + 5;
-      const yPos = i * binHeight;
+legendBins.forEach((start, i) => {
+  const end = start + 5;
 
-      legendGroup.append("rect")
-        .attr("x", 20)
-        .attr("y", yPos)
-        .attr("width", 30)
-        .attr("height", binHeight)
-        .attr("fill", ramp((start + end) / 2))
-        .attr("stroke", "black")
-        .attr("class", "legend-bin")
-        .attr("data-bin", start)
-        .on("mouseover", function() {
-          legendHovered = true;
-          hoveredBin = start;
-        
-          // Temporarily hide selected state visuals
-          if (selectedStateName) {
-            mapGroup.selectAll("path")
-              .filter(d => d.properties.name === selectedStateName)
-              .classed("selected", false)
-              .style("stroke", "#fff")
-              .style("stroke-width", 1)
-              .style("filter", null)
-              .style("fill", "#ffffff");
-          }
-          d3.select(this).attr("stroke-width", 3);
-          updateMap(currentYear);
-        })
-        
-        .on("mouseout", function() {
-          legendHovered = false;
-          const thisBin = +d3.select(this).attr("data-bin");
-          hoveredBin = null;
-          if (!selectedBins.has(thisBin)) d3.select(this).attr("stroke-width", 1);
-          updateMap(currentYear);
-        
-          // Restore selected state's visuals if it exists
-          if (selectedStateName) {
-            mapGroup.selectAll("path")
-              .filter(d => d.properties.name === selectedStateName)
-              .classed("selected", true)
-              .style("stroke", "#FFFFC5")
-              .style("stroke-width", 2.5)
-              .style("filter", "url(#selected-glow)");
-          }
-        })
-        .on("click", function() {
-          clearSelectedState();
-          const thisBin = +d3.select(this).attr("data-bin");
-          if (selectedBins.has(thisBin)) {
-            selectedBins.delete(thisBin);
-            d3.select(this).classed("active", false);
-          } else {
-            selectedBins.add(thisBin);
-            d3.select(this).classed("active", true);
-          }
-          updateMap(currentYear);
-          updateClearFiltersButtonState();
-        });
+  // Draw bin rectangle
+  legendGroup.append("rect")
+    .attr("x", i * binWidth)
+    .attr("y", 0)
+    .attr("width", binWidth)
+    .attr("height", 20)
+    .attr("fill", ramp((start + end) / 2))
+    .attr("stroke", "black")
+    .attr("class", "legend-bin")
+    .attr("data-bin", start)
+    .on("mouseover", function () {
+      legendHovered = true;
+      hoveredBin = start;
 
-      legendGroup.append("text")
-        .attr("x", 55)
-        .attr("y", yPos - 3) // shift closer to the top edge of each bin
-        .text(`${end}%`)     // show only the top value
-        .style("font-size", "20px")
-        .style("alignment-baseline", "hanging");
+      if (selectedStateName) {
+        mapGroup.selectAll("path")
+          .filter(d => d.properties.name === selectedStateName)
+          .classed("selected", false)
+          .style("stroke", "#fff")
+          .style("stroke-width", 1)
+          .style("filter", null)
+          .style("fill", "#ffffff");
+      }
+
+      d3.select(this).attr("stroke-width", 3);
+      updateMap(currentYear);
+    })
+    .on("mouseout", function () {
+      legendHovered = false;
+      const thisBin = +d3.select(this).attr("data-bin");
+      hoveredBin = null;
+
+      if (!selectedBins.has(thisBin)) {
+        d3.select(this).attr("stroke-width", 1);
+      }
+
+      updateMap(currentYear);
+
+      if (selectedStateName) {
+        mapGroup.selectAll("path")
+          .filter(d => d.properties.name === selectedStateName)
+          .classed("selected", true)
+          .style("stroke", "#FFFFC5")
+          .style("stroke-width", 2.5)
+          .style("filter", "url(#selected-glow)");
+      }
+    })
+    .on("click", function () {
+      clearSelectedState();
+      const thisBin = +d3.select(this).attr("data-bin");
+
+      if (selectedBins.has(thisBin)) {
+        selectedBins.delete(thisBin);
+        d3.select(this).classed("active", false);
+      } else {
+        selectedBins.add(thisBin);
+        d3.select(this).classed("active", true);
+      }
+
+      updateMap(currentYear);
+      updateClearFiltersButtonState();
     });
+
+  // Draw bin label
+  legendGroup.append("text")
+    .attr("x", i * binWidth + binWidth / 2)
+    .attr("y", 35)
+    .attr("text-anchor", "middle")
+    .style("font-size", "12px")
+    .text(`${end}%`);
+});
 
     // Add Clear Filters button
     d3.select("#clear-filters-button")
@@ -304,17 +444,18 @@ const legendGroup = legendSvg.append("g")
       d3.select("#line-chart-container").html(""); // Clear
 
       // Add "Unselect State" button below the chart
-      const margin = { top: 40, right: 30, bottom: 50, left: 60 };
-      const width = 550 - margin.left - margin.right;
-      const height = 400 - margin.top - margin.bottom;
-    
+      const offset = 500; // how far right you want to shift the chart
+
+      const margin = { top: 30, right: 30, bottom: 40, left: 45 };
+      const width = 500 - margin.left - margin.right;
+      const height = 250 - margin.top - margin.bottom;
+      
       const svgLine = d3.select("#line-chart-container")
         .append("svg")
-        .attr("width", width + margin.left + margin.right)
+        .attr("width", width + margin.left + margin.right + offset) // add extra width!
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-    
+        .attr("transform", `translate(${margin.left + offset},${margin.top})`);
       const x = d3.scaleLinear()
         .domain(d3.extent(stateValues, d => d.year))
         .range([0, width]);
@@ -325,10 +466,12 @@ const legendGroup = legendSvg.append("g")
       const line = d3.line().x(d => x(d.year)).y(d => y(d.value));
     
       svgLine.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x).tickFormat(d3.format("d")))
-        .selectAll("text")
-        .style("font-size", "15px"); 
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x).tickFormat(d3.format("d")))
+      .selectAll("text")
+      .style("font-size", "12px")
+      .attr("transform", "rotate(-40)")
+      .style("text-anchor", "end");
       svgLine.append("g")
         .call(d3.axisLeft(y))
         .selectAll("text")
@@ -439,7 +582,7 @@ svgLine.append("path")
         .attr("x", width / 2)
         .attr("y", -10)
         .attr("text-anchor", "middle")
-        .style("font-size", "15px")
+        .style("font-size", "12px")
         .style("font-weight", "bold")
         .text(`% Worried About Global Warming: ${stateName} vs National Avg`);
     
@@ -447,7 +590,7 @@ svgLine.append("path")
         .attr("x", width / 2)
         .attr("y", height + 48)
         .attr("text-anchor", "middle")
-        .style("font-size", "15px")
+        .style("font-size", "12px")
         .text("Year");
     
       svgLine.append("text")
@@ -496,16 +639,17 @@ svgLine.append("path")
     
       d3.select("#line-chart-container").html(""); 
     
-      const margin = { top: 40, right: 30, bottom: 50, left: 60 };
-      const width = 550 - margin.left - margin.right;
-      const height = 400 - margin.top - margin.bottom;
+      const margin = { top: 30, right: 30, bottom: 40, left: 45 };
+      const width = 500 - margin.left - margin.right;
+      const height = 250 - margin.top - margin.bottom;
+        
 
       const svgLine = d3.select("#line-chart-container")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
     
       const x = d3.scaleLinear().domain(d3.extent(values, d => d.year)).range([0, width]);
       const y = d3.scaleLinear().domain([0, 100]).range([height, 0]);
