@@ -34,16 +34,19 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
       <input type="range" id="year-slider" alt="A slider that allows the user to click and slide over the slider to see a map of each year" data-intro="Click and slide over the slider to see a map of each year" data-title="Year Selector" data-step="1">
       <button id="play-button" data-title="Play Button" data-intro="Click here to see an animation of the state populations' opinions over time." data-step="2">▶ Play</button>
     </div>
+    <div id="slider-ticks"></div>
+    </div>
   </div>
 
   <!-- Map and Chart Layout -->
-  <div class="map-chart-wrapper">
-    <div id="map-container"
+  <div class="map-chart-wrapper" style="display: flex; flex-wrap: wrap;">
+    <div id="map-container" 
+    style="flex: 1 1 50%; min-width: 300px; height: auto;"
     alt="A map that highlights the percentage of each state's reported worries about global warming for that year. Each state grows increasingly darker with the year."
     data-intro="Hover over any state to see its data. Click a state to view its trend."
     data-step="3">
     
-      <svg id="map" width="800" height="500">
+      <svg id="map" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: auto;">
         <defs>
           <!-- Softer glow for hover -->
           <filter id="hover-glow">
@@ -57,22 +60,32 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
         </defs>
       </svg>
     </div>
-    <div id="legend-container"
+    <div id="legend-wrapper"
+    style="flex: 1 1 15%; min-width: 150px; display: flex; flex-direction: column; align-items: center; gap: 10px;"
     data-title="Color Legend"
-     data-intro="These color bins represent percentage ranges. Click to filter."
-     data-step="4">
+    data-intro="These color bins represent percentage ranges. Click to filter."
+    data-step="4">
 
-      <!-- Legend will go here using D3 -->
-    </div>
-    <div id="line-chart-container"
+ <div id="legend-container">
+   <!-- D3 appends the legend SVG here -->
+ </div>
+
+ <button id="clear-filters-button"
+         disabled
+         style="cursor: not-allowed; padding: 10px 16px; font-size: 16px;">
+   Clear All Filters
+ </button>
+</div>
+
+<div id="line-chart-container"
+    style="flex: 1 1 100%; margin-top: 20px;"
     data-title="Trend View"
-     data-intro="Clicking a state shows its opinion trend here over time."
-     data-step="5">
-      <!-- Line chart renders here -->
-    </div>
-    </div>
-  </div>
+    data-intro="Clicking a state shows its opinion trend here over time."
+    data-step="5">
+ <!-- Line chart renders here -->
+</div>
 
+</div>
   <h2 class="sr-only">Map Summary: This choropleth shows the percentage of adults concerned about climate change by state and year. Darker states represent higher concern.</h2>
 
   <h2 class="sr-only">Line Chart Summary: This line chart shows how concern about climate change changes over time for a selected state.</h2>
