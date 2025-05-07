@@ -194,16 +194,32 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       }
       playing = !playing;
     });
+  //   const tickContainer = d3.select("#slider-ticks");
+  //   tickContainer.selectAll("div")
+  //     .data(years)
+  //     .enter()
+  //     .append("div")
+  //     .attr("class", "tick-mark")
+  //     .style("--tick-height", (d, i) => i % 5 === 0 ? "16px" : "8px")
+  // .text((d, i) => i % 2 === 0 ? d : "")
+  //     .text((d, i) => {
+  //       // Show fewer labels for space — e.g., every 2nd or 5th year
+  //       return i % 2 === 0 ? d : ""; 
+        
+  //     });
+    const containerHeight = document.getElementById('map').getBoundingClientRect().height;
+    const legendHeight = Math.max(300, containerHeight * 0.85); // Scale with map, but minimum 300px
 
-    // Vertical Legend scaled to match map height
+    // // Vertical Legend scaled to match map height
     const legendBins = d3.range(35, 75, 5).reverse();
-    const legendHeight = 400; // Match map height
+    // const legendHeight = 400; // Match map height
     const binHeight = legendHeight / legendBins.length;
 
     const legendSvg = d3.select("#legend-container")
-      .append("svg")
-      .attr("width", 90)
-      .attr("height", 460); // Adjust if needed
+    .append("svg")
+    .attr("width", 100) // slightly wider
+    .attr("height", legendHeight + 60); // space for top padding
+  
 
 const legendGroup = legendSvg.append("g")
   .attr("transform", `translate(-15, 30)`);
@@ -274,30 +290,23 @@ const legendGroup = legendSvg.append("g")
         .attr("x", 55)
         .attr("y", yPos - 3) // shift closer to the top edge of each bin
         .text(`${end}%`)     // show only the top value
-        .style("font-size", "12px")
+        .style("font-size", "20px")
         .style("alignment-baseline", "hanging");
     });
 
     // Add Clear Filters button
-    d3.select("#legend-container")
-      .append("button")
-      .attr("id", "clear-filters-button")
-      .attr("disabled", true)
-      .style("cursor", "not-allowed")
-      .style("padding", "5px 10px")
-      .style("font-size", "12px")
-      .text("Clear All Filters")
-      .on("click", () => {
-        selectedBins.clear();
-        d3.selectAll(".legend-bin").classed("active", false);
-        const sliderValue = +d3.select("#year-slider").property("value");
-        currentYear = years[sliderValue];
-        updateMap(currentYear);
-        d3.select("#year-label").text(`Year: ${currentYear}`);
-        d3.select("#clear-filters-button")
-          .attr("disabled", true)
-          .style("cursor", "not-allowed");
-      });
+    d3.select("#clear-filters-button")
+    .on("click", () => {
+      selectedBins.clear();
+      d3.selectAll(".legend-bin").classed("active", false);
+      const sliderValue = +d3.select("#year-slider").property("value");
+      currentYear = years[sliderValue];
+      updateMap(currentYear);
+      d3.select("#year-label").text(`Year: ${currentYear}`);
+      d3.select("#clear-filters-button")
+        .attr("disabled", true)
+        .style("cursor", "not-allowed");
+    });
 
     function drawLineChart(stateName) {
       const years = Object.keys(dataByYear);
@@ -331,11 +340,11 @@ const legendGroup = legendSvg.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d3.format("d")))
         .selectAll("text")
-        .style("font-size", "12px"); 
+        .style("font-size", "15px"); 
       svgLine.append("g")
         .call(d3.axisLeft(y))
         .selectAll("text")
-        .style("font-size", "12px"); 
+        .style("font-size", "15px"); 
     
       // Blue national average line
       svgLine.append("path")
