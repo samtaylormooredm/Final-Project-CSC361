@@ -11,13 +11,13 @@ body {
 }
 
 .title-container h1 {
-  font-size: 22px;
+  font-size: 40px;
   font-weight: bold;
   margin-bottom: 12px;
 }
 
 .title-container p {
-  font-size: 15px;
+  font-size: 25px;
   color: #444;
   line-height: 1.6;
   max-width: none;
@@ -50,7 +50,7 @@ button {
 }
 
 #year-label {
-  font-size: 15px;
+  font-size: 25px;
   margin-bottom: 10px;
 }
 
