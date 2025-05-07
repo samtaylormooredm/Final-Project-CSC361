@@ -107,6 +107,7 @@ path {
   box-sizing: border-box;
 }
 
+
 /* #slider-ticks {
   display: flex;
   justify-content: space-between;
@@ -169,20 +170,17 @@ path {
 
 /* Resize line chart area */
 #line-chart-container {
-  flex: 1 1 500px; /* allow growth */
-  max-width: 100%;
-  padding-right: 200px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: auto; /* remove fixed height */
-  justify-content: center;
+  flex: 1 1 auto;
+  padding-bottom: 20px;
+  max-width: fit-content;
+  display: block;
+  box-sizing: content-box;
+  margin: 0 auto;
 }
 
 #unselect-button {
   position: static;
-  margin-top: 20px;
+  margin-top: 30px;
   font-size: 16px;
   margin-top: 10px;     /* moves it upward */
   margin-left: 20px;    /* shifts it to the left */

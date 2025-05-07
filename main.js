@@ -444,17 +444,18 @@ legendBins.forEach((start, i) => {
       d3.select("#line-chart-container").html(""); // Clear
 
       // Add "Unselect State" button below the chart
+      const offset = 500; // how far right you want to shift the chart
+
       const margin = { top: 30, right: 30, bottom: 40, left: 45 };
-const width = 500 - margin.left - margin.right;
-const height = 250 - margin.top - margin.bottom;
-    
+      const width = 500 - margin.left - margin.right;
+      const height = 250 - margin.top - margin.bottom;
+      
       const svgLine = d3.select("#line-chart-container")
         .append("svg")
-        .attr("width", width + margin.left + margin.right)
+        .attr("width", width + margin.left + margin.right + offset) // add extra width!
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-    
+        .attr("transform", `translate(${margin.left + offset},${margin.top})`);
       const x = d3.scaleLinear()
         .domain(d3.extent(stateValues, d => d.year))
         .range([0, width]);
@@ -639,15 +640,16 @@ svgLine.append("path")
       d3.select("#line-chart-container").html(""); 
     
       const margin = { top: 30, right: 30, bottom: 40, left: 45 };
-      const width = 360 - margin.left - margin.right;
+      const width = 500 - margin.left - margin.right;
       const height = 250 - margin.top - margin.bottom;
+        
 
       const svgLine = d3.select("#line-chart-container")
       .append("svg")
-      .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .attr("preserveAspectRatio", "xMidYMid meet")
-      .style("width", "100%")
-      .style("height", "auto")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
     
       const x = d3.scaleLinear().domain(d3.extent(values, d => d.year)).range([0, width]);
       const y = d3.scaleLinear().domain([0, 100]).range([height, 0]);
