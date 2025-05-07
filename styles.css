@@ -142,3 +142,12 @@ path.selected {
   stroke-width: 2.5;
   filter: url(#selected-glow); /* more intense glow */
 }
+
+/* Accessibility classes - hidden alt text summaries for charts for map and line chart */
+.sr-only {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
