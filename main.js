@@ -274,7 +274,7 @@ const legendGroup = legendSvg.append("g")
         .attr("x", 55)
         .attr("y", yPos - 3) // shift closer to the top edge of each bin
         .text(`${end}%`)     // show only the top value
-        .style("font-size", "12px")
+        .style("font-size", "20px")
         .style("alignment-baseline", "hanging");
     });
 
@@ -285,7 +285,7 @@ const legendGroup = legendSvg.append("g")
       .attr("disabled", true)
       .style("cursor", "not-allowed")
       .style("padding", "5px 10px")
-      .style("font-size", "12px")
+      .style("font-size", "15px")
       .text("Clear All Filters")
       .on("click", () => {
         selectedBins.clear();
@@ -331,11 +331,11 @@ const legendGroup = legendSvg.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d3.format("d")))
         .selectAll("text")
-        .style("font-size", "12px"); 
+        .style("font-size", "15px"); 
       svgLine.append("g")
         .call(d3.axisLeft(y))
         .selectAll("text")
-        .style("font-size", "12px"); 
+        .style("font-size", "15px"); 
     
       // Blue national average line
       svgLine.append("path")
