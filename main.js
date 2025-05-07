@@ -444,7 +444,6 @@ legendBins.forEach((start, i) => {
       d3.select("#line-chart-container").html(""); // Clear
 
       // Add "Unselect State" button below the chart
-      const offset = 500; // how far right you want to shift the chart
 
       const margin = { top: 30, right: 30, bottom: 40, left: 45 };
       const width = 500 - margin.left - margin.right;
@@ -452,10 +451,10 @@ legendBins.forEach((start, i) => {
       
       const svgLine = d3.select("#line-chart-container")
         .append("svg")
-        .attr("width", width + margin.left + margin.right + offset) // add extra width!
+        .attr("width", width + margin.left + margin.right) // add extra width!
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", `translate(${margin.left + offset},${margin.top})`);
+        .attr("transform", `translate(${margin.left},${margin.top})`);
       const x = d3.scaleLinear()
         .domain(d3.extent(stateValues, d => d.year))
         .range([0, width]);
