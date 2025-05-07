@@ -7,7 +7,7 @@ body {
 }
 
 .title-container {
-  padding: 20px 40px 10px 40px; /* Top, Right, Bottom, Left */
+  padding: 20px 40px 20px 40px; /* Top, Right, Bottom, Left */
 }
 
 .title-container h1 {
@@ -125,14 +125,14 @@ path {
 #map-container {
   flex: 1 1 85%;
   max-width: 85%;
+  padding: 20px 0px 20px 0px; /* Top, Right, Bottom, Left */
 }
 
 #legend-container {
   flex: 1 1 auto;
   max-width: 150px;
-  padding-top: 20px;
   display: flex;
-  justify-content: center;
+  justify-content: left;
 }
 
 
