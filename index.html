@@ -37,13 +37,14 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
   </div>
 
   <!-- Map and Chart Layout -->
-  <div class="map-chart-wrapper">
-    <div id="map-container"
+  <div class="map-chart-wrapper" style="display: flex; flex-wrap: wrap;">
+    <div id="map-container" 
+    style="flex: 1 1 50%; min-width: 300px; height: auto;"
     alt="A map that highlights the percentage of each state's reported worries about global warming for that year. Each state grows increasingly darker with the year."
     data-intro="Hover over any state to see its data. Click a state to view its trend."
     data-step="3">
     
-      <svg id="map" width="800" height="500">
+      <svg id="map" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: auto;">
         <defs>
           <!-- Softer glow for hover -->
           <filter id="hover-glow">
@@ -57,7 +58,7 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
         </defs>
       </svg>
     </div>
-    <div id="legend-container"
+    <div id="legend-container" style="flex: 1 1 50%; min-width: 300px;"
     data-title="Color Legend"
      data-intro="These color bins represent percentage ranges. Click to filter."
      data-step="4">
@@ -65,6 +66,7 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
       <!-- Legend will go here using D3 -->
     </div>
     <div id="line-chart-container"
+    style="flex: 1 1 100%; margin-top: 20px;"
     data-title="Trend View"
      data-intro="Clicking a state shows its opinion trend here over time."
      data-step="5">
