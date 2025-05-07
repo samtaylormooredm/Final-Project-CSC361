@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <!-- Responsive design to improve mobile accessibility -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Climate Concern Choropleth</title>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.css" rel="stylesheet">
@@ -9,7 +11,7 @@
 </head>
 <body>
 <!-- Intro.Js Tour -->
-<div id="welcome-modal" style="display:none; position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
+<div id="welcome-modal" alt="An introduction to the visualization; you can tab through this introduction" style="display:none; position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
 background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
 <h3>Welcome!</h3>
 <p>Click below to take a tour of this visualization.</p>
@@ -29,7 +31,7 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
   <div class="controls">
     <div id="year-label">Year: </div>
     <div class="slider-container">
-      <input type="range" id="year-slider" data-intro="Click and slide over the slider to see a map of each year" data-title="Year Selector" data-step="1">
+      <input type="range" id="year-slider" alt="A slider that allows the user to click and slide over the slider to see a map of each year" data-intro="Click and slide over the slider to see a map of each year" data-title="Year Selector" data-step="1">
       <button id="play-button" data-title="Play Button" data-intro="Click here to see an animation of the state populations' opinions over time." data-step="2">▶ Play</button>
     </div>
   </div>
@@ -37,6 +39,7 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
   <!-- Map and Chart Layout -->
   <div class="map-chart-wrapper">
     <div id="map-container"
+    alt="A map that highlights the percentage of each state's reported worries about global warming for that year. Each state grows increasingly darker with the year."
     data-intro="Hover over any state to see its data. Click a state to view its trend."
     data-step="3">
     
@@ -69,6 +72,14 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
     </div>
     </div>
   </div>
+
+  <h2 class="sr-only">Map Summary: This choropleth shows the percentage of adults concerned about climate change by state and year. Darker states represent higher concern.</h2>
+
+  <h2 class="sr-only">Line Chart Summary: This line chart shows how concern about climate change changes over time for a selected state.</h2>
+
+  <a href="./data.html" title="An HTML page with all the information in the dataset">
+    <img src="image.jpg" alt="An HTML page with all the information in the dataset" />
+  </a>
 
   <!-- Tooltip -->
   <div class="tooltip" id="tooltip"></div>
