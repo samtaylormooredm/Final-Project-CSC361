@@ -3,6 +3,8 @@ var height = 500;
 var lowColor = '#f0f8ff';
 var highColor = '#000068';
 var svg = d3.select("#map");
+// svg.attr("viewBox", `0 0 ${width} ${height}`)
+//    .attr("preserveAspectRatio", "xMidYMid meet");
 var projection = d3.geoAlbersUsa().translate([width / 1.85, height / 1.9]).scale([1050]);
 
 
@@ -285,7 +287,7 @@ const legendGroup = legendSvg.append("g")
       .attr("disabled", true)
       .style("cursor", "not-allowed")
       .style("padding", "5px 10px")
-      .style("font-size", "15px")
+      .style("font-size", "12px")
       .text("Clear All Filters")
       .on("click", () => {
         selectedBins.clear();
@@ -331,11 +333,11 @@ const legendGroup = legendSvg.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d3.format("d")))
         .selectAll("text")
-        .style("font-size", "15px"); 
+        .style("font-size", "12px"); 
       svgLine.append("g")
         .call(d3.axisLeft(y))
         .selectAll("text")
-        .style("font-size", "15px"); 
+        .style("font-size", "12px"); 
     
       // Blue national average line
       svgLine.append("path")
