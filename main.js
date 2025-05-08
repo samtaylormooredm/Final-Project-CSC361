@@ -3,9 +3,9 @@ var height = 500;
 var lowColor = '#f0f8ff';
 var highColor = '#000068';
 var svg = d3.select("#map");
-// svg.attr("viewBox", `0 0 ${width} ${height}`)
-//    .attr("preserveAspectRatio", "xMidYMid meet");
-var projection = d3.geoAlbersUsa().translate([width / 1.85, height / 1.9]).scale([1050]);
+svg.attr("viewBox", `0 0 ${width} ${height}`)
+   .attr("preserveAspectRatio", "xMidYMid meet");
+var projection = d3.geoAlbersUsa().translate([width / 1.85, height / 1.9]).scale([900]);
 
 
 var path = d3.geoPath().projection(projection);
