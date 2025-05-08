@@ -34,58 +34,50 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
       <input type="range" id="year-slider" alt="A slider that allows the user to click and slide over the slider to see a map of each year" data-intro="Click and slide over the slider to see a map of each year" data-title="Year Selector" data-step="1">
       <button id="play-button" data-title="Play Button" data-intro="Click here to see an animation of the state populations' opinions over time." data-step="2">▶ Play</button>
     </div>
-    <div id="slider-ticks"></div>
-    </div>
   </div>
 
   <!-- Map and Chart Layout -->
-   
-  <div class="main-wrapper" style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
+  <div class="map-chart-wrapper">
+    <div id="map-container"
+    alt="A map that highlights the percentage of each state's reported worries about global warming for that year. Each state grows increasingly darker with the year."
+    data-intro="Hover over any state to see its data. Click a state to view its trend."
+    data-step="3">
+    
+      <svg id="map" width="800" height="500">
+        <defs>
+          <!-- Softer glow for hover -->
+          <filter id="hover-glow">
+            <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#FFFFED" flood-opacity="0.8"/>
+          </filter>
+        
+          <!-- Stronger glow for selected state -->
+          <filter id="selected-glow">
+            <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#FFD700" flood-opacity="1"/>
+          </filter>
+        </defs>
+      </svg>
+    </div>
+    <div id="legend-container"
+    data-title="Color Legend"
+     data-intro="These color bins represent percentage ranges. Click to filter."
+     data-step="4">
 
-  <!-- MAP/Legend - left panel -->
-  <div class="left-panel" style="flex: 1 1 55%; max-width: 55%;">
-  <div id="map-container"
-       style="width: 100%; max-width: 800px;"
-       alt="A map that highlights the percentage of each state's reported worries about global warming for that year."
-       data-intro="Hover over any state to see its data. Click a state to view its trend."
-       data-step="3">
-    <svg id="map" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: auto;">
-      <!-- filters etc. -->
-    </svg>
+      <!-- Legend will go here using D3 -->
+    </div>
+    <div id="line-chart-container"
+    data-title="Trend View"
+     data-intro="Clicking a state shows its opinion trend here over time."
+     data-step="5">
+      <!-- Line chart renders here -->
+    </div>
+    </div>
   </div>
 
-  <!-- LEGEND BELOW MAP -->
-  <div id="legend-wrapper"
-  style="margin-top: 15px; display: flex; flex-direction: column; align-items: center;"
-       data-title="Color Legend"
-       data-intro="These color bins represent percentage ranges. Click to filter."
-       data-step="4">
-
-    <div id="legend-container"></div>
-
-    <button id="clear-filters-button"
-            disabled
-            style="cursor: not-allowed; padding: 10px 16px; font-size: 16px; margin-top: 8px;">
-      Clear All Filters
-    </button>
-  </div>
-  </div>
-
-  <!-- LINE CHART BELOW LEGEND -->
-  <div id="line-chart-container"
-       style="flex: 1 1 40%; max-width: 40%; margin-top: 10px;"
-       data-title="Trend View"
-       data-intro="Clicking a state shows its opinion trend here over time."
-       data-step="5">
-    <!-- Line chart goes here -->
-  </div>
-
-</div>
   <h2 class="sr-only">Map Summary: This choropleth shows the percentage of adults concerned about climate change by state and year. Darker states represent higher concern.</h2>
 
   <h2 class="sr-only">Line Chart Summary: This line chart shows how concern about climate change changes over time for a selected state.</h2>
 
-  <a class="sr-only" href="./data.html" title="An HTML page with all the information in the dataset">
+  <a href="./data.html" title="An HTML page with all the information in the dataset">
     <img src="image.jpg" alt="An HTML page with all the information in the dataset" />
   </a>
 
