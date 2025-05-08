@@ -205,7 +205,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
     const legendSvg = d3.select("#legend-container")
       .append("svg")
       .attr("width", 90)
-      .attr("height", 460); // Adjust if needed
+      .attr("height", 390); // Adjust if needed
 
 const legendGroup = legendSvg.append("g")
   .attr("transform", `translate(-15, 30)`);
