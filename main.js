@@ -319,6 +319,8 @@ const legendGroup = legendSvg.append("g")
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        
     
       const x = d3.scaleLinear()
         .domain(d3.extent(stateValues, d => d.year))
@@ -467,9 +469,9 @@ svgLine.append("path")
         d3.select("#line-chart-container")
         .append("div")
         .attr("id", "unselect-wrapper")
-        .style("text-align", "center")
-        .style("margin-left", "28px")
-        .style("margin-top", "0px")
+        // .style("text-align", "center")
+        // .style("margin-left", "28px")
+        // .style("margin-top", "0px")
         .append("button")
         .attr("id", "unselect-button")
         .text("Unselect State")

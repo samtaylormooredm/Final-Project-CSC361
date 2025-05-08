@@ -94,7 +94,7 @@ path {
 #map {
   width: 100%;
   min-width: 300px;
-  height: auto;
+  max-width: 800px;
   display: block;
 }
 #map-container {
@@ -122,7 +122,7 @@ path {
   white-space: nowrap; /* prevents button text wrapping */
   text-align: center;
   margin-top: -70px;     /* moves it upward */
-  margin-left: -50px;    /* shifts it to the left */
+  margin-right: 60px;    
 }
 
 
@@ -133,14 +133,24 @@ path {
   max-width: 700px;
   box-sizing: border-box;
   background-color: white;
+  align-items: center;
+  justify-content: center;
 }
 
 #unselect-button {
   position: static;
   margin-top: 20px;
   font-size: 16px;
-  margin-top: 10px;     /* moves it upward */
-  margin-left: 20px;    /* shifts it to the left */
+  /* margin-top: 10px;    
+  margin-left: 20px;    shifts it to the left */
+}
+#unselect-wrapper {
+  width: fit-content;
+  margin: 0 auto;
+  margin-top: -10px;
+  padding-left: 215px;
+  padding-bottom: 30px;
+  /* padding-left: 60px; ⬅ aligns with left margin of the chart */
 }
 
 path.selected {
