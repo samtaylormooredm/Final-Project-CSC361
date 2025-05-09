@@ -122,7 +122,7 @@ path {
   white-space: nowrap; /* prevents button text wrapping */
   text-align: center;
   margin-top: -70px;     /* moves it upward */
-  margin-right: 60px;    
+  margin-right: 80px;    
 }
 
 
@@ -140,10 +140,10 @@ path {
 #unselect-button {
   position: static;
   margin-top: 20px;
-  font-size: 16px;
-  /* margin-top: 10px;    
-  margin-left: 20px;    shifts it to the left */
+  font-size: 12px;
+  margin-left: -145px; /* Moves button to the left */
 }
+
 #unselect-wrapper {
   width: fit-content;
   margin: 0 auto;
@@ -168,3 +168,4 @@ path.selected {
   height: 1px;
   overflow: hidden;
 }
+
