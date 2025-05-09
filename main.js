@@ -13,7 +13,7 @@ var tooltip = d3.select("#tooltip");
 let currentYear;
 let selectedBins = new Set();
 let hoveredBin = null;
-let selectedStateName = null;
+let selectedStateNames = new Set();
 let legendHovered = false;
 
 
@@ -85,7 +85,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
           if (selectedBins.size > 0 && !inSelected) return;
           if (hoveredBin !== null && selectedBins.size === 0 && !inHovered) return;
         
-          if (d.properties.name !== selectedStateName) {
+          if (!selectedStateNames.has(d.properties.name)) {
             d3.select(this)
               .raise()
               .style("stroke", "#FFFFC5")
@@ -109,12 +109,12 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
 
         .on("mouseout", function(d) {
           tooltip.style("visibility", "hidden");
-          if (d.properties.name === selectedStateName) return; // Don't touch selected state
+          if (selectedStateNames.has(d.properties.name)) return; // Don't touch selected states
           d3.select(this)
             .style("stroke", "#fff")
             .style("stroke-width", 1)
             .style("filter", null);
-        })
+        })        
         
         .on("click", function(d) {
           const val = d.properties.value;
@@ -133,12 +133,16 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
           }
         
           const clickedState = d.properties.name;
-          if (selectedStateName === clickedState) {
-            selectedStateName = null;
+          if (selectedStateNames.has(clickedState)) {
+            selectedStateNames.delete(clickedState);
+          } else {
+            selectedStateNames.add(clickedState);
+          }
+
+          if (selectedStateNames.size === 0) {
             drawNationalAverage();
           } else {
-            selectedStateName = clickedState;
-            drawLineChart(clickedState);
+            drawLineChart(Array.from(selectedStateNames));
           }
         
           mapGroup.selectAll("path")
@@ -147,12 +151,12 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
             .style("stroke-width", 1)
             .style("filter", null);
         
-          if (selectedStateName !== null) {
-            const selected = mapGroup.selectAll("path")
-              .filter(d => d.properties.name === selectedStateName)
-              .classed("selected", true);
-        
-            selected.raise().style("filter", "url(#selected-glow)");
+            if (selectedStateNames.size > 0) {
+              mapGroup.selectAll("path")
+                .filter(d => selectedStateNames.has(d.properties.name))
+                .classed("selected", true)
+                .raise()
+                .style("filter", "url(#selected-glow)");
           }
         });        
       states.exit().remove();
@@ -228,9 +232,9 @@ const legendGroup = legendSvg.append("g")
           hoveredBin = start;
         
           // Temporarily hide selected state visuals
-          if (selectedStateName) {
+          if (selectedStateNames.size > 0) {
             mapGroup.selectAll("path")
-              .filter(d => d.properties.name === selectedStateName)
+              .filter(d => selectedStateNames.has(d.properties.name))
               .classed("selected", false)
               .style("stroke", "#fff")
               .style("stroke-width", 1)
@@ -249,9 +253,9 @@ const legendGroup = legendSvg.append("g")
           updateMap(currentYear);
         
           // Restore selected state's visuals if it exists
-          if (selectedStateName) {
+          if (selectedStateNames.size > 0) {
             mapGroup.selectAll("path")
-              .filter(d => d.properties.name === selectedStateName)
+              .filter(d => selectedStateNames.has(d.properties.name))
               .classed("selected", true)
               .style("stroke", "#FFFFC5")
               .style("stroke-width", 2.5)
@@ -301,58 +305,51 @@ const legendGroup = legendSvg.append("g")
           .style("cursor", "not-allowed");
       });
 
-    function drawLineChart(stateName) {
-      const years = Object.keys(dataByYear);
-      const stateValues = years.map(y => ({ year: +y, value: dataByYear[y][stateName] }));
-      const nationalAverage = getNationalAverageData();
-    
-      d3.select("#line-chart-container").html(""); // Clear
-
-      // Add "Unselect State" button below the chart
-      const margin = { top: 40, right: 30, bottom: 50, left: 60 };
-      const width = 550 - margin.left - margin.right;
-      const height = 400 - margin.top - margin.bottom;
-    
-      const svgLine = d3.select("#line-chart-container")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-
-        
-    
-      const x = d3.scaleLinear()
-        .domain(d3.extent(stateValues, d => d.year))
-        .range([0, width]);
-    
-      const y = d3.scaleLinear()
-        .domain([0, 100])
-        .range([height, 0]);
-      const line = d3.line().x(d => x(d.year)).y(d => y(d.value));
-    
-      svgLine.append("g")
+      function drawLineChart(stateNames) {
+        const years = Object.keys(dataByYear);
+        const nationalAverage = getNationalAverageData();
+        const natValueByYear = {};
+        nationalAverage.forEach(d => { natValueByYear[d.year] = d.value; });
+      
+        d3.select("#line-chart-container").html(""); // Clear
+      
+        const margin = { top: 40, right: 30, bottom: 50, left: 60 };
+        const width = 550 - margin.left - margin.right;
+        const height = 400 - margin.top - margin.bottom;
+      
+        const svgLine = d3.select("#line-chart-container")
+          .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom + 50)
+          .append("g")
+          .attr("transform", `translate(${margin.left},${margin.top})`);
+      
+        const x = d3.scaleLinear()
+          .domain(d3.extent(years, y => +y))
+          .range([0, width]);
+      
+        const y = d3.scaleLinear().domain([0, 100]).range([height, 0]);
+      
+        const line = d3.line().x(d => x(d.year)).y(d => y(d.value));
+        svgLine.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d3.format("d")))
         .selectAll("text")
-        .style("font-size", "12px"); 
-      svgLine.append("g")
-        .call(d3.axisLeft(y))
-        .selectAll("text")
-        .style("font-size", "12px"); 
-    
-      // Blue national average line
-      svgLine.append("path")
-        .datum(nationalAverage)
-        .attr("fill", "none")
-        .attr("stroke", "#007BFF")
-        .attr("stroke-width", 2)
-        .attr("d", line);
-            
-              // First, create a quick lookup for national values by year
-        const natValueByYear = {};
-        nationalAverage.forEach(d => { natValueByYear[d.year] = d.value; });
+        .style("font-size", "12px");
 
+        svgLine.append("g")
+      .call(d3.axisLeft(y))
+      .selectAll("text")
+      .style("font-size", "12px");  
+            
+        // National average line
+        svgLine.append("path")
+          .datum(nationalAverage)
+          .attr("fill", "none")
+          .attr("stroke", "#007BFF")
+          .attr("stroke-width", 2)
+          .attr("d", line);
+      
         svgLine.selectAll(".dot-nat")
           .data(nationalAverage)
           .enter()
@@ -361,7 +358,6 @@ const legendGroup = legendSvg.append("g")
           .attr("cy", d => y(d.value))
           .attr("r", 4)
           .attr("fill", "#007BFF")
-          .style("cursor", "pointer")
           .on("mouseover", function(d) {
             d3.select(this).attr("r", 7);
             tooltip
@@ -370,107 +366,95 @@ const legendGroup = legendSvg.append("g")
               .text(`${d.year}: ${d.value.toFixed(1)}%`);
           })
           .on("mousemove", function() {
-            tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+            tooltip.style("top", (d3.event.pageY - 10) + "px")
+                   .style("left", (d3.event.pageX + 10) + "px");
           })
           .on("mouseout", function() {
             d3.select(this).attr("r", 4);
             tooltip.style("visibility", "hidden");
-          })
-        .on("mousemove", function() {
-          tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
-        })
-        .on("mouseout", function() {
-          d3.select(this).attr("r", 4);
-          tooltip.style("visibility", "hidden");
+          });
+      
+        // Now handle each selected state
+        stateNames.forEach((stateName, index) => {
+          const color = d3.schemeCategory10[index % 10];
+          const stateValues = years.map(y => ({
+            year: +y,
+            value: dataByYear[y][stateName]
+          }));
+      
+          const adjustedStateValues = stateValues.map(d => {
+            const natVal = natValueByYear[d.year];
+            const isOverlap = Math.abs(d.value - natVal) < 0.4;
+            const pixelOffset = isOverlap ? (d.value > natVal ? -5 : 5) : 0;
+            return { ...d, yOffset: pixelOffset };
+          });
+      
+          svgLine.append("path")
+            .datum(adjustedStateValues)
+            .attr("fill", "none")
+            .attr("stroke", color)
+            .attr("stroke-width", 2)
+            .attr("d", d3.line()
+              .x(d => x(d.year))
+              .y(d => y(d.value) + d.yOffset)
+            );
+      
+          svgLine.selectAll(`.dot-${stateName.replace(/\s+/g, '-')}`)
+            .data(adjustedStateValues)
+            .enter()
+            .append("circle")
+            .attr("cx", d => x(d.year))
+            .attr("cy", d => y(d.value) + d.yOffset)
+            .attr("r", 4)
+            .attr("fill", color)
+            .style("cursor", "pointer")
+            .on("mouseover", function(d) {
+              d3.select(this).attr("r", 7);
+              tooltip
+                .style("visibility", "visible")
+                .style("color", color)
+                .text(`${stateName} (${d.year}): ${d.value.toFixed(1)}%`);
+            })
+            .on("mousemove", function() {
+              tooltip.style("top", (d3.event.pageY - 10) + "px")
+                     .style("left", (d3.event.pageX + 10) + "px");
+            })
+            .on("mouseout", function() {
+              d3.select(this).attr("r", 4);
+              tooltip.style("visibility", "hidden");
+            });
         });
       
-    
-      // Yellow selected state line
-      // Create adjusted state values for line and dots
-const adjustedStateValues = stateValues.map(d => {
-  const natVal = natValueByYear[d.year];
-  const isOverlap = Math.abs(d.value - natVal) < 0.4;
-  const pixelOffset = isOverlap ? (d.value > natVal ? -5 : 5) : 0;
-  return {
-    ...d,
-    yOffset: pixelOffset
-  };
-});
-
-// Yellow selected state line (with adjusted offset)
-svgLine.append("path")
-  .datum(adjustedStateValues)
-  .attr("fill", "none")
-  .attr("stroke", "#FFD700")
-  .attr("stroke-width", 2)
-  .attr("d", d3.line()
-    .x(d => x(d.year))
-    .y(d => y(d.value) + d.yOffset)
-  );
-
-      // Yellow dots
-      svgLine.selectAll(".dot")
-        .data(adjustedStateValues)
-        .enter()
-        .append("circle")
-        .attr("cx", d => x(d.year))
-        .attr("cy", d => y(d.value) + d.yOffset)
-        .attr("r", 4)
-        .attr("fill", "#FFD700")
-        .style("cursor", "pointer")
-        .on("mouseover", function(d) {
-          d3.select(this).attr("r", 7);
-          tooltip
-            .style("visibility", "visible")
-            .style("color", "#FFD700")
-            .text(`${d.year}: ${d.value.toFixed(1)}%`);
-        })
-        .on("mousemove", function() {
-          tooltip.style("top", (d3.event.pageY - 10) + "px")
-                .style("left", (d3.event.pageX + 10) + "px");
-        })
-        .on("mouseout", function() {
-          d3.select(this).attr("r", 4);
-          tooltip.style("visibility", "hidden");
-        })
-        .on("mousemove", function() {
-          tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
-        })
-        .on("mouseout", function() {
-          d3.select(this).attr("r", 4); // reset to original size
-          tooltip.style("visibility", "hidden");
-        });
-        
-    
-      svgLine.append("text")
-        .attr("x", width / 2)
-        .attr("y", -10)
-        .attr("text-anchor", "middle")
-        .style("font-size", "15px")
-        .style("font-weight", "bold")
-        .text(`% Worried About Global Warming: ${stateName} vs National Avg`);
-    
-      svgLine.append("text")
-        .attr("x", width / 2)
-        .attr("y", height + 48)
-        .attr("text-anchor", "middle")
-        .style("font-size", "15px")
-        .text("Year");
-    
-      svgLine.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -45)
-        .attr("x", -height / 2)
-        .attr("text-anchor", "middle")
-        .style("font-size", "15px")
-        .text("% Worried");
+        svgLine.append("text")
+          .attr("x", width / 2)
+          .attr("y", -10)
+          .attr("text-anchor", "middle")
+          .style("font-size", "15px")
+          .style("font-weight", "bold")
+          .text(`% Worried: ${stateNames.join(", ")} vs National Avg`);
+      
+        svgLine.append("text")
+          .attr("x", width / 2)
+          .attr("y", height + 48)
+          .attr("text-anchor", "middle")
+          .style("font-size", "15px")
+          .text("Year");
+      
+        svgLine.append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", -45)
+          .attr("x", -height / 2)
+          .attr("text-anchor", "middle")
+          .style("font-size", "15px")
+          .text("% Worried");
+            
       
         // Instead of appending a new button, just enable the existing one
-      d3.select("#unselect-button")
+        d3.select("#unselect-button")
         .attr("disabled", null)
         .style("cursor", "pointer")
         .on("click", () => {
-          selectedStateName = null;
+          selectedStateNames.clear(); // clear all selected states
           drawNationalAverage();
           updateMap(currentYear);
           mapGroup.selectAll("path")
@@ -479,7 +463,26 @@ svgLine.append("path")
             .style("stroke-width", 1)
             .style("filter", null);
         });
+// Add legend for National Average
+const legend = svgLine.append("g")
+  .attr("class", "legend")
+  .attr("transform", `translate(${width - 450}, ${margin.bottom + 300})`);
 
+// Blue box
+legend.append("rect")
+  .attr("x", 0)
+  .attr("y", 0)
+  .attr("width", 18)
+  .attr("height", 18)
+  .attr("fill", "#007BFF");
+
+// Label text
+legend.append("text")
+  .attr("x", 25)
+  .attr("y", 14)
+  .text("National Average")
+  .style("font-size", "13px")
+  .attr("alignment-baseline", "middle");
         
     }
     function getNationalAverageData() {
@@ -503,7 +506,7 @@ svgLine.append("path")
       const svgLine = d3.select("#line-chart-container")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("height", height + margin.top + margin.bottom + 50)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
     
@@ -584,7 +587,7 @@ svgLine.append("path")
     }
     
     function clearSelectedState() {
-      selectedStateName = null;
+      selectedStateNames.clear(); // clear all selected state names
       mapGroup.selectAll("path")
         .classed("selected", false)
         .style("stroke", "#fff")
