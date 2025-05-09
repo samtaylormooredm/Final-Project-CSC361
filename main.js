@@ -391,6 +391,7 @@ const legendGroup = legendSvg.append("g")
       
           svgLine.append("path")
             .datum(adjustedStateValues)
+            .attr("class", `state-line line-${stateName.replace(/\s+/g, '-')}`)
             .attr("fill", "none")
             .attr("stroke", color)
             .attr("stroke-width", 2)
@@ -409,17 +410,32 @@ const legendGroup = legendSvg.append("g")
             .attr("fill", color)
             .style("cursor", "pointer")
             .on("mouseover", function(d) {
-              d3.select(this).attr("r", 7);
+              d3.select(this).attr("r", 7)
+              .attr("stroke-width", 4);
               tooltip
                 .style("visibility", "visible")
                 .style("color", color)
                 .text(`${stateName} (${d.year}): ${d.value.toFixed(1)}%`);
+                svgLine.selectAll(".state-line")
+                .filter(function () { return this !== d3.event.target; })
+                .style("opacity", 0.2);
+                svgLine.selectAll(".state-line")
+                .style("opacity", 0.2)
+                .attr("stroke-width", 2);
+            
+              svgLine.select(`.line-${stateName.replace(/\s+/g, '-')}`)
+                .style("opacity", 1)
+                .attr("stroke-width", 4);
+          
             })
             .on("mousemove", function() {
               tooltip.style("top", (d3.event.pageY - 10) + "px")
                      .style("left", (d3.event.pageX + 10) + "px");
             })
             .on("mouseout", function() {
+              svgLine.selectAll(".state-line")
+              .attr("stroke-width", 2)
+              .style("opacity", 1)
               d3.select(this).attr("r", 4);
               tooltip.style("visibility", "hidden");
             });
