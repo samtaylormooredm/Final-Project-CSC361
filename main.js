@@ -44,6 +44,33 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
   var ramp = d3.scaleLinear().domain([35, 80]).range([lowColor, highColor]);
   d3.json("us-states.json", function(json) {
     var mapGroup = svg.append("g");
+
+
+    function getFillColor(d) {
+      const val = d.properties.value;
+      const name = d.properties.name;
+    
+      const matchesSelected = selectedBins.size > 0 && Array.from(selectedBins).some(start => val >= start && val < start + 5);
+      const matchesHover = hoveredBin !== null && val >= hoveredBin && val < hoveredBin + 5;
+    
+      if (selectedStateNames.has(name) && stateColorMap[name]) {
+        return stateColorMap[name];
+      }
+    
+      if (selectedBins.size > 0) return matchesSelected ? ramp(val) : "#ffffff";
+      if (hoveredBin !== null) return matchesHover ? ramp(val) : "#ffffff";
+    
+      return ramp(val);
+    }
+    
+    function refreshMapAndColors() {
+      mapGroup.selectAll("path")
+        .style("fill", d => getFillColor(d))
+        .style("stroke", d => selectedStateNames.has(d.properties.name) ? "#FFFFC5" : "#fff")
+        .style("stroke-width", d => selectedStateNames.has(d.properties.name) ? 2.5 : 1)
+        .style("filter", d => selectedStateNames.has(d.properties.name) ? "url(#selected-glow)" : null);
+    }
+    
     function updateMap(year) {
       json.features.forEach(d => {
         d.properties.value = dataByYear[year][d.properties.name];
@@ -155,22 +182,25 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
           if (selectedStateNames.size === 0) {
             drawNationalAverage();
           } else {
-            drawLineChart(Array.from(selectedStateNames)).then(() => updateMap(currentYear));
+            drawLineChart(Array.from(selectedStateNames));
+            updateMap(currentYear);
+            refreshMapAndColors();
+                  
           }
         
-          mapGroup.selectAll("path")
-            .classed("selected", false)
-            .style("stroke", "#fff")
-            .style("stroke-width", 1)
-            .style("filter", null);
+          // mapGroup.selectAll("path")
+          //   .classed("selected", false)
+          //   .style("stroke", "#fff")
+          //   .style("stroke-width", 1)
+          //   .style("filter", null);
         
-            if (selectedStateNames.size > 0) {
-              mapGroup.selectAll("path")
-                .filter(d => selectedStateNames.has(d.properties.name))
-                .classed("selected", true)
-                .raise()
-                .style("filter", "url(#selected-glow)");
-          }
+          //   if (selectedStateNames.size > 0) {
+          //     mapGroup.selectAll("path")
+          //       .filter(d => selectedStateNames.has(d.properties.name))
+          //       .classed("selected", true)
+          //       .raise()
+          //       .style("filter", "url(#selected-glow)");
+          // }
         });        
       states.exit().remove();
     }
@@ -241,43 +271,20 @@ const legendGroup = legendSvg.append("g")
         .attr("class", "legend-bin")
         .attr("data-bin", start)
         .on("mouseover", function() {
-          legendHovered = true;
           hoveredBin = start;
-        
-          // Temporarily hide selected state visuals
-          if (selectedStateNames.size > 0) {
-            mapGroup.selectAll("path")
-              .filter(d => selectedStateNames.has(d.properties.name))
-              .classed("selected", false)
-              .style("stroke", "#fff")
-              .style("stroke-width", 1)
-              .style("filter", null)
-              .style("fill", "#ffffff");
-          }
           d3.select(this).attr("stroke-width", 3);
-          updateMap(currentYear);
+          refreshMapAndColors();  // handles everything visually
         })
         
         .on("mouseout", function() {
-          legendHovered = false;
-          const thisBin = +d3.select(this).attr("data-bin");
           hoveredBin = null;
-          if (!selectedBins.has(thisBin)) d3.select(this).attr("stroke-width", 1);
-          updateMap(currentYear);
-        
-          // Restore selected state's visuals if it exists
-          if (selectedStateNames.size > 0) {
-            mapGroup.selectAll("path")
-              .filter(d => selectedStateNames.has(d.properties.name))
-              .classed("selected", true)
-              .style("stroke", "#FFFFC5")
-              .style("stroke-width", 2.5)
-              .style("filter", "url(#selected-glow)");
-          }
+          d3.select(this).attr("stroke-width", selectedBins.has(+d3.select(this).attr("data-bin")) ? 3 : 1);
+          refreshMapAndColors();  // again, this handles it cleanly
         })
         .on("click", function() {
-          clearSelectedState();
           const thisBin = +d3.select(this).attr("data-bin");
+        
+          // Toggle bin
           if (selectedBins.has(thisBin)) {
             selectedBins.delete(thisBin);
             d3.select(this).classed("active", false);
@@ -285,10 +292,25 @@ const legendGroup = legendSvg.append("g")
             selectedBins.add(thisBin);
             d3.select(this).classed("active", true);
           }
+        
+          // Prune selected states that don't match any selected bin
+          selectedStateNames = new Set(
+            Array.from(selectedStateNames).filter(state => {
+              const val = dataByYear[currentYear][state];
+              return Array.from(selectedBins).some(bin => val >= bin && val < bin + 5);
+            })
+          );
+        
+          if (selectedStateNames.size > 0) {
+            drawLineChart(Array.from(selectedStateNames));
+          } else {
+            drawNationalAverage();
+          }
+        
           updateMap(currentYear);
+          refreshMapAndColors();
           updateClearFiltersButtonState();
         });
-
       legendGroup.append("text")
         .attr("x", 55)
         .attr("y", yPos - 3) // shift closer to the top edge of each bin
@@ -312,10 +334,13 @@ const legendGroup = legendSvg.append("g")
         const sliderValue = +d3.select("#year-slider").property("value");
         currentYear = years[sliderValue];
         updateMap(currentYear);
+        refreshMapAndColors();
         d3.select("#year-label").text(`Year: ${currentYear}`);
         d3.select("#clear-filters-button")
           .attr("disabled", true)
           .style("cursor", "not-allowed");
+      refreshMapAndColors();
+
       });
 
       function drawLineChart(stateNames) {
@@ -488,6 +513,7 @@ const legendGroup = legendSvg.append("g")
           selectedStateNames.clear(); // clear all selected states
           drawNationalAverage();
           updateMap(currentYear);
+          refreshMapAndColors();
           mapGroup.selectAll("path")
             .classed("selected", false)
             .style("stroke", "#fff")
@@ -635,6 +661,7 @@ legend.append("text")
       } else {
         button.attr("disabled", null).style("cursor", "pointer");
       }
+      refreshMapAndColors();
     }
   });
 });
