@@ -15,6 +15,8 @@ let selectedBins = new Set();
 let hoveredBin = null;
 let selectedStateNames = new Set();
 let legendHovered = false;
+let stateColorMap = {}; // GLOBAL
+
 
 
 window.onload = function () {
@@ -38,7 +40,6 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
       dataByYear[year][row.state] = +row[year];
     });
   });
-
   currentYear = years[0];
   var ramp = d3.scaleLinear().domain([35, 80]).range([lowColor, highColor]);
   d3.json("us-states.json", function(json) {
@@ -72,6 +73,11 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
 
           const matchesSelected = selectedBins.size > 0 && Array.from(selectedBins).some(start => val >= start && val < start + 5);
           const matchesHover = hoveredBin !== null && val >= hoveredBin && val < hoveredBin + 5;
+
+
+          if (selectedStateNames.has(d.properties.name) && stateColorMap[d.properties.name]) {
+            return stateColorMap[d.properties.name];
+          }
 
           if (selectedBins.size > 0) return matchesSelected ? ramp(val) : "#ffffff";
           if (hoveredBin !== null) return matchesHover ? ramp(val) : "#ffffff";
@@ -142,7 +148,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
           if (selectedStateNames.size === 0) {
             drawNationalAverage();
           } else {
-            drawLineChart(Array.from(selectedStateNames));
+            drawLineChart(Array.from(selectedStateNames)).then(() => updateMap(currentYear));
           }
         
           mapGroup.selectAll("path")
@@ -306,6 +312,7 @@ const legendGroup = legendSvg.append("g")
       });
 
       function drawLineChart(stateNames) {
+        stateColorMap = {};
         const years = Object.keys(dataByYear);
         const nationalAverage = getNationalAverageData();
         const natValueByYear = {};
@@ -377,6 +384,7 @@ const legendGroup = legendSvg.append("g")
         // Now handle each selected state
         stateNames.forEach((stateName, index) => {
           const color = d3.schemeCategory10[index % 10];
+          stateColorMap[stateName] = color;
           const stateValues = years.map(y => ({
             year: +y,
             value: dataByYear[y][stateName]
@@ -499,7 +507,9 @@ legend.append("text")
   .text("National Average")
   .style("font-size", "13px")
   .attr("alignment-baseline", "middle");
-        
+
+  updateMap(currentYear);
+
     }
     function getNationalAverageData() {
       const years = Object.keys(dataByYear);
