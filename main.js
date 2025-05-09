@@ -142,6 +142,13 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
           if (selectedStateNames.has(clickedState)) {
             selectedStateNames.delete(clickedState);
           } else {
+            if (selectedStateNames.size >= 5) {
+              const popup = d3.select("#popup-warning");
+              popup.html("You can only compare up to 5 states for clarity.");
+              popup.style("display", "block");
+              setTimeout(() => popup.style("display", "none"), 2500);
+              return;
+            }
             selectedStateNames.add(clickedState);
           }
 
