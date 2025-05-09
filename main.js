@@ -276,7 +276,7 @@ const legendGroup = legendSvg.append("g")
         .attr("x", 55)
         .attr("y", yPos - 3) // shift closer to the top edge of each bin
         .text(`${end}%`)     // show only the top value
-        .style("font-size", "20px")
+        .style("font-size", "16px")
         .style("alignment-baseline", "hanging");
     });
 
@@ -465,18 +465,9 @@ svgLine.append("path")
         .style("font-size", "15px")
         .text("% Worried");
       
-        // Add unselect button outside the SVG (under the chart)
-        d3.select("#line-chart-container")
-        .append("div")
-        .attr("id", "unselect-wrapper")
-        // .style("text-align", "center")
-        // .style("margin-left", "28px")
-        // .style("margin-top", "0px")
-        .append("button")
-        .attr("id", "unselect-button")
-        .text("Unselect State")
-        .style("padding", "6px 14px")
-        .style("font-size", "12px")
+        // Instead of appending a new button, just enable the existing one
+      d3.select("#unselect-button")
+        .attr("disabled", null)
         .style("cursor", "pointer")
         .on("click", () => {
           selectedStateName = null;
@@ -488,6 +479,8 @@ svgLine.append("path")
             .style("stroke-width", 1)
             .style("filter", null);
         });
+
+        
     }
     function getNationalAverageData() {
       const years = Object.keys(dataByYear);
@@ -584,19 +577,10 @@ svgLine.append("path")
         .style("font-size", "15px")
         .text("% Worried");
       
-      d3.select("#line-chart-container")
-        .append("div")
-        .attr("id", "unselect-wrapper")
-        .style("text-align", "center")
-        .style("margin-left", "28px")
-        .style("margin-top", "0px")
-        .append("button")
-        .attr("id", "unselect-button")
-        .text("Unselect State")
-        .attr("disabled", true) // disable button when no state is selected
-        .style("padding", "6px 14px")
-        .style("font-size", "12px")
-        .style("cursor", "not-allowed");
+        d3.select("#unselect-button")
+        .attr("disabled", true)
+        .style("cursor", "not-allowed")
+        .on("click", null); // remove handler
     }
     
     function clearSelectedState() {
