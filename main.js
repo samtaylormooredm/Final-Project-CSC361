@@ -356,14 +356,14 @@ const legendGroup = legendSvg.append("g")
       
         d3.select("#line-chart-container").html(""); // Clear
       
-        const margin = { top: 40, right: 30, bottom: 50, left: 60 };
-        const width = 550 - margin.left - margin.right;
+        const margin = { top: 60, right: 30, bottom: 68, left: 80 };
+        const width = 575 - margin.left - margin.right;
         const height = 400 - margin.top - margin.bottom;
       
         const svgLine = d3.select("#line-chart-container")
           .append("svg")
           .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom + 50)
+          .attr("height", height + margin.top + margin.bottom)
           .append("g")
           .attr("transform", `translate(${margin.left},${margin.top})`);
       
@@ -563,14 +563,14 @@ legend.append("text")
     
       d3.select("#line-chart-container").html(""); 
     
-      const margin = { top: 40, right: 30, bottom: 50, left: 60 };
-      const width = 550 - margin.left - margin.right;
+      const margin = { top: 60, right: 30, bottom: 68, left: 80 };
+      const width = 575 - margin.left - margin.right;
       const height = 400 - margin.top - margin.bottom;
 
       const svgLine = d3.select("#line-chart-container")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom + 50)
+        .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
     
