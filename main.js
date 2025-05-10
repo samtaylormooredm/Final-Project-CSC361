@@ -68,7 +68,12 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
         .style("fill", d => getFillColor(d))
         .style("stroke", d => selectedStateNames.has(d.properties.name) ? "#FFFFC5" : "#fff")
         .style("stroke-width", d => selectedStateNames.has(d.properties.name) ? 2.5 : 1)
-        .style("filter", d => selectedStateNames.has(d.properties.name) ? "url(#selected-glow)" : null);
+        .style("filter", d => selectedStateNames.has(d.properties.name) ? "url(#selected-glow)" : null)
+        .each(function(d) {
+          if (selectedStateNames.has(d.properties.name)) {
+            d3.select(this).raise();  // <-- ensure glow renders above neighbors
+          }
+        });
     }
     
     function updateMap(year) {
@@ -142,13 +147,22 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
 
         .on("mouseout", function(d) {
           tooltip.style("visibility", "hidden");
-          if (selectedStateNames.has(d.properties.name)) return; // Don't touch selected states
+          
+          if (selectedStateNames.has(d.properties.name)) return;
+        
           d3.select(this)
             .style("stroke", "#fff")
             .style("stroke-width", 1)
             .style("filter", null);
-        })        
         
+          // Restore z-index of all selected states after any mouseout
+          mapGroup.selectAll("path")
+            .each(function(d) {
+              if (selectedStateNames.has(d.properties.name)) {
+                d3.select(this).raise();
+              }
+            });
+        })
         .on("click", function(d) {
           const val = d.properties.value;
           const inSelected = selectedBins.size > 0 && Array.from(selectedBins).some(start => val >= start && val < start + 5);
@@ -185,24 +199,14 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
             drawLineChart(Array.from(selectedStateNames));
           }
           updateMap(currentYear);
+          d3.select(this)
+            .style("filter", "url(#selected-glow)")
+            .style("stroke", "#FFFFC5")
+            .style("stroke-width", 2.5)
+            .raise(); // ← THIS MUST HAPPEN RIGHT AFTER .style(
           refreshMapAndColors();
-          
-        
-          // mapGroup.selectAll("path")
-          //   .classed("selected", false)
-          //   .style("stroke", "#fff")
-          //   .style("stroke-width", 1)
-          //   .style("filter", null);
-        
-          //   if (selectedStateNames.size > 0) {
-          //     mapGroup.selectAll("path")
-          //       .filter(d => selectedStateNames.has(d.properties.name))
-          //       .classed("selected", true)
-          //       .raise()
-          //       .style("filter", "url(#selected-glow)");
-          // }
         });        
-      states.exit().remove();
+      // states.exit().remove();
     }
 
     updateMap(currentYear);
