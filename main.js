@@ -254,7 +254,7 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
     const legendHeight = 400; // Match map height
     const binHeight = legendHeight / legendBins.length;
 
-    const legendSvg = d3.select("#legend-container")
+    const legendSvg = d3.select("#legend-svg-wrapper")
       .append("svg")
       .attr("width", 90)
       .attr("height", 390); // Adjust if needed
@@ -389,6 +389,7 @@ const legendGroup = legendSvg.append("g")
         // National average line
         svgLine.append("path")
           .datum(nationalAverage)
+          .attr("class", "nat-line")
           .attr("fill", "none")
           .attr("stroke", "#2f2585")
           .attr("stroke-width", 2)
@@ -398,6 +399,7 @@ const legendGroup = legendSvg.append("g")
           .data(nationalAverage)
           .enter()
           .append("circle")
+          .attr("class", "dot-nat")
           .attr("cx", d => x(d.year))
           .attr("cy", d => y(d.value))
           .attr("r", 4)
@@ -408,18 +410,37 @@ const legendGroup = legendSvg.append("g")
               .style("visibility", "visible")
               .style("color", "#2f2585")
               .text(`National Avg (${d.year}): ${d.value.toFixed(1)}%`);
+          
+            // Dim only state lines and state dots
+            svgLine.selectAll(".state-line, .dot").style("opacity", 0.2);
+
+            // KEEP ALL national dots visible
+            svgLine.selectAll(".dot-nat").style("opacity", 1);
+
+          
+            svgLine.select(".nat-line")
+              .style("opacity", 1)
+              .attr("stroke-width", 4); // thicken the line
+            d3.select(this).style("opacity", 1);
           })
           .on("mousemove", function() {
             tooltip.style("top", (d3.event.pageY - 10) + "px")
                    .style("left", (d3.event.pageX + 10) + "px");
           })
           .on("mouseout", function() {
-            d3.select(this).attr("r", 4);
+            d3.select(this).attr("r", 4); // reset dot radius
             tooltip.style("visibility", "hidden");
+          
+            svgLine.selectAll(".state-line, .nat-line")
+              .style("opacity", 1)
+              .attr("stroke-width", 2);
+          
+            svgLine.selectAll(".dot, .dot-nat")
+              .style("opacity", 1);
           });
-      
+          
+          
         // Now handle each selected state
-        // ###
         stateNames.forEach((stateName, index) => {
           const customColors = ["#9e4a96", "#5ea799", "#4377a9", "#c26a78", "#94caec"];
           stateColorMap[stateName] = customColors[index % customColors.length];
@@ -450,41 +471,48 @@ const legendGroup = legendSvg.append("g")
             .data(adjustedStateValues)
             .enter()
             .append("circle")
+            .attr("class", `dot dot-${stateName.replace(/\s+/g, '-')}`) // ADD THIS
             .attr("cx", d => x(d.year))
             .attr("cy", d => y(d.value) + d.yOffset)
             .attr("r", 4)
             .attr("fill", stateColorMap[stateName])
             .style("cursor", "pointer")
             .on("mouseover", function(d) {
-              d3.select(this).attr("r", 7)
-              .attr("stroke-width", 4);
+              d3.select(this).attr("r", 7).attr("stroke-width", 4);
               tooltip
                 .style("visibility", "visible")
                 .style("color", stateColorMap[stateName])
                 .text(`${stateName} (${d.year}): ${d.value.toFixed(1)}%`);
-                svgLine.selectAll(".state-line")
-                .filter(function () { return this !== d3.event.target; })
-                .style("opacity", 0.2);
-                svgLine.selectAll(".state-line")
-                .style("opacity", 0.2)
-                .attr("stroke-width", 2);
             
+              // Fade out all lines/dots
+              
+              svgLine.selectAll(".state-line, .nat-line")
+                .style("opacity", 0.2);
+              svgLine.selectAll(".dot, .dot-nat")
+                .style("opacity", 0.2);
+            
+              // Highlight this state
               svgLine.select(`.line-${stateName.replace(/\s+/g, '-')}`)
                 .style("opacity", 1)
                 .attr("stroke-width", 4);
-          
+              d3.selectAll(`.dot-${stateName.replace(/\s+/g, '-')}`)
+                .style("opacity", 1);
             })
             .on("mousemove", function() {
               tooltip.style("top", (d3.event.pageY - 10) + "px")
                      .style("left", (d3.event.pageX + 10) + "px");
             })
             .on("mouseout", function() {
-              svgLine.selectAll(".state-line")
-              .attr("stroke-width", 2)
-              .style("opacity", 1)
               d3.select(this).attr("r", 4);
               tooltip.style("visibility", "hidden");
-            });
+              svgLine.selectAll(".state-line, .nat-line")
+                .style("opacity", 1)
+                .attr("stroke-width", 2);
+              svgLine.selectAll(".dot, .dot-nat")
+                .style("opacity", 1);
+            })
+            
+            
         });
       
         svgLine.append("text")
@@ -593,34 +621,57 @@ legend.append("text")
     
       svgLine.append("path")
         .datum(values)
+        .attr("class", "nat-line")
         .attr("fill", "none")
         .attr("stroke", "#2f2585")
         .attr("stroke-width", 2)
         .attr("d", line);
     
-      svgLine.selectAll(".dot")
+      svgLine.selectAll(".dot-nat")
         .data(values)
         .enter()
         .append("circle")
+        .attr("class", "dot-nat")
         .attr("cx", d => x(d.year))
         .attr("cy", d => y(d.value))
         .attr("r", 4)
         .attr("fill", "#2f2585")
         .style("cursor", "pointer")
+        
         .on("mouseover", function(d) {
-          d3.select(this).attr("r", 7); // grow on hover
+          d3.select(this).attr("r", 7);
           tooltip
             .style("visibility", "visible")
-            .style("color", "#2f2585") // or "#" for national
+            .style("color", "#2f2585")
             .text(`National Avg (${d.year}): ${d.value.toFixed(1)}%`);
+        
+          // Dim only state lines and state dots
+          svgLine.selectAll(".state-line, .dot").style("opacity", 0.2);
+
+          // KEEP ALL national dots visible
+          svgLine.selectAll(".dot-nat").style("opacity", 1);
+        
+          // Highlight the line
+          svgLine.selectAll(".nat-line")
+            .style("opacity", 1)
+            .attr("stroke-width", 4);
         })
+        
         .on("mousemove", function() {
-          tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+          tooltip.style("top", (d3.event.pageY - 10) + "px")
+                 .style("left", (d3.event.pageX + 10) + "px");
         })
         .on("mouseout", function() {
-          d3.select(this).attr("r", 4); // reset to original size
+          d3.select(this).attr("r", 4); // reset radius
           tooltip.style("visibility", "hidden");
+          svgLine.selectAll(".state-line, .nat-line")
+            .style("opacity", 1)
+            .attr("stroke-width", 2);
+          svgLine.selectAll(".dot, .dot-nat")
+            .style("opacity", 1);
         });
+        
+        
     
       svgLine.append("text")
         .attr("x", width / 2)

@@ -49,16 +49,21 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
         </filter>
         <filter id="selected-glow">
           <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#FFD700" flood-opacity="1"/>
-        </filter>
+        </filter>a
       </defs>
     </svg>
   </div>
 
   <!-- Legend -->
-  <div id="legend-container" data-title="Color Legend"
-    data-intro="These color bins represent percentage ranges. Click to filter." data-step="4">
-    <!-- Legend created dynamically -->
+  <div id="legend-container">
+    <div id="legend-svg-wrapper"
+      data-title="Color Legend"
+      data-intro="These color bins represent percentage ranges. Click to filter."
+      data-step="4">
+      <!-- Legend SVG inserted here dynamically -->
+    </div>
   </div>
+
 
   <!-- Chart + Unselect Button -->
   <div id="line-chart-section">
