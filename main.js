@@ -183,10 +183,10 @@ d3.csv("climate_worried_by_state.csv", function(dataRaw) {
             drawNationalAverage();
           } else {
             drawLineChart(Array.from(selectedStateNames));
-            updateMap(currentYear);
-            refreshMapAndColors();
-                  
           }
+          updateMap(currentYear);
+          refreshMapAndColors();
+          
         
           // mapGroup.selectAll("path")
           //   .classed("selected", false)
@@ -385,7 +385,7 @@ const legendGroup = legendSvg.append("g")
         svgLine.append("path")
           .datum(nationalAverage)
           .attr("fill", "none")
-          .attr("stroke", "#007BFF")
+          .attr("stroke", "#2f2585")
           .attr("stroke-width", 2)
           .attr("d", line);
       
@@ -396,13 +396,13 @@ const legendGroup = legendSvg.append("g")
           .attr("cx", d => x(d.year))
           .attr("cy", d => y(d.value))
           .attr("r", 4)
-          .attr("fill", "#007BFF")
+          .attr("fill", "#2f2585")
           .on("mouseover", function(d) {
             d3.select(this).attr("r", 7);
             tooltip
               .style("visibility", "visible")
-              .style("color", "#007BFF")
-              .text(`${d.year}: ${d.value.toFixed(1)}%`);
+              .style("color", "#2f2585")
+              .text(`National Avg (${d.year}): ${d.value.toFixed(1)}%`);
           })
           .on("mousemove", function() {
             tooltip.style("top", (d3.event.pageY - 10) + "px")
@@ -414,9 +414,10 @@ const legendGroup = legendSvg.append("g")
           });
       
         // Now handle each selected state
+        // ###
         stateNames.forEach((stateName, index) => {
-          const color = d3.schemeCategory10[index % 10];
-          stateColorMap[stateName] = color;
+          const customColors = ["#9e4a96", "#5ea799", "#4377a9", "#c26a78", "#94caec"];
+          stateColorMap[stateName] = customColors[index % customColors.length];
           const stateValues = years.map(y => ({
             year: +y,
             value: dataByYear[y][stateName]
@@ -433,7 +434,7 @@ const legendGroup = legendSvg.append("g")
             .datum(adjustedStateValues)
             .attr("class", `state-line line-${stateName.replace(/\s+/g, '-')}`)
             .attr("fill", "none")
-            .attr("stroke", color)
+            .attr("stroke", stateColorMap[stateName])
             .attr("stroke-width", 2)
             .attr("d", d3.line()
               .x(d => x(d.year))
@@ -447,14 +448,14 @@ const legendGroup = legendSvg.append("g")
             .attr("cx", d => x(d.year))
             .attr("cy", d => y(d.value) + d.yOffset)
             .attr("r", 4)
-            .attr("fill", color)
+            .attr("fill", stateColorMap[stateName])
             .style("cursor", "pointer")
             .on("mouseover", function(d) {
               d3.select(this).attr("r", 7)
               .attr("stroke-width", 4);
               tooltip
                 .style("visibility", "visible")
-                .style("color", color)
+                .style("color", stateColorMap[stateName])
                 .text(`${stateName} (${d.year}): ${d.value.toFixed(1)}%`);
                 svgLine.selectAll(".state-line")
                 .filter(function () { return this !== d3.event.target; })
@@ -531,7 +532,7 @@ legend.append("rect")
   .attr("y", 0)
   .attr("width", 18)
   .attr("height", 18)
-  .attr("fill", "#007BFF");
+  .attr("fill", "#2f2585")
 
 // Label text
 legend.append("text")
@@ -588,7 +589,7 @@ legend.append("text")
       svgLine.append("path")
         .datum(values)
         .attr("fill", "none")
-        .attr("stroke", "#007BFF")
+        .attr("stroke", "#2f2585")
         .attr("stroke-width", 2)
         .attr("d", line);
     
@@ -599,14 +600,14 @@ legend.append("text")
         .attr("cx", d => x(d.year))
         .attr("cy", d => y(d.value))
         .attr("r", 4)
-        .attr("fill", "#007BFF")
+        .attr("fill", "#2f2585")
         .style("cursor", "pointer")
         .on("mouseover", function(d) {
           d3.select(this).attr("r", 7); // grow on hover
           tooltip
             .style("visibility", "visible")
-            .style("color", "#007BFF") // or "#" for national
-            .text(`${d.year}: ${d.value.toFixed(1)}%`);
+            .style("color", "#2f2585") // or "#" for national
+            .text(`National Avg (${d.year}): ${d.value.toFixed(1)}%`);
         })
         .on("mousemove", function() {
           tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
