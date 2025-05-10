@@ -5,7 +5,8 @@ var highColor = '#000068';
 var svg = d3.select("#map");
 svg.attr("viewBox", `0 0 ${width} ${height}`)
    .attr("preserveAspectRatio", "xMidYMid meet");
-var projection = d3.geoAlbersUsa().translate([width / 1.85, height / 1.9]).scale([900]);
+var projection = d3.geoAlbersUsa().translate([width / 1.99, height / 1.9])
+  .scale([960]);
 
 
 var path = d3.geoPath().projection(projection);
@@ -319,7 +320,7 @@ const legendGroup = legendSvg.append("g")
         .attr("x", 55)
         .attr("y", yPos - 3) // shift closer to the top edge of each bin
         .text(`${end}%`)     // show only the top value
-        .style("font-size", "16px")
+        .style("font-size", "13px")
         .style("alignment-baseline", "hanging");
     });
 
