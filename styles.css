@@ -5,8 +5,27 @@ body {
   padding: 0;
 }
 
+.data-link-button {
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  align-items: center;
+  text-decoration: none;
+  background-color: #004080;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.data-link-button:hover,
+.data-link-button:focus {
+  background-color: #0059b3;
+  outline: none;
+}
+
 .title-container {
-  padding: 20px 40px 10px 40px; /* Top, Right, Bottom, Left */
+  padding: 20px 40px 30px 40px; /* increased bottom padding for spacing */
 }
 
 .title-container h1 {
