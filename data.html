@@ -1,4 +1,30 @@
-<table class="table table-bordered table-hover table-condensed">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Climate Concern Table</title>
+
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <!-- Tablesorter -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
+
+  <style>
+    table.tablesorter th {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Estimated % of Adults Worried About Climate Change</h1>
+  </header>
+
+  <main>
+    <p>This table displays the yearly percentage of residents in each U.S. state who report being worried about global warming. Click any column header to sort by that year.</p>
+<table id="climate-table" class="table table-bordered table-hover table-condensed">
     <thead><tr><th title="Field #1">state</th>
     <th title="Field #2">2010</th>
     <th title="Field #3">2011</th>
@@ -934,4 +960,16 @@
     <td align="right">50.14</td>
     <td align="right">47.77</td>
     </tr>
-    </tbody></table>
+</tbody></table>
+</main>
+<script>
+    $(document).ready(function () {
+      $("#climate-table").tablesorter({
+        theme: 'default',
+        widgets: ['zebra'],
+        sortList: [[0, 0]]
+      });
+    });
+  </script>
+</body>
+</html>
