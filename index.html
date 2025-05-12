@@ -18,7 +18,9 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
   <button id="start-tour-btn" style="margin-top: 10px;">Start Tour</button>
 </div>
 
+<main role="main">
 <!-- Title -->
+ <header>
 <div class="title-container">
   <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
     <h1>Estimated % of adults who are worried about global warming</h1>
@@ -29,6 +31,7 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
       View Sortable Data Table
     </a>
   </div>
+</header>
 </div>
 
 <!-- Controls -->
@@ -91,11 +94,7 @@ background: white; border: 1px solid #ccc; padding: 20px; z-index: 9999; box-sha
 <h2 class="sr-only">Map Summary: This choropleth shows the percentage of adults concerned about climate change by state and year. Darker states represent higher concern.</h2>
 <h2 class="sr-only">Line Chart Summary: This line chart shows how concern about climate change changes over time for a selected state.</h2>
 
-<!-- Hidden Link to Raw Data -->
-<a class="sr-only" href="./data.html" title="An HTML page with all the information in the dataset">
-  <img src="image.jpg" alt="An HTML page with all the information in the dataset" />
-</a>
-
+</main>
 <!-- Tooltip -->
 <div class="tooltip" id="tooltip"></div>
 
