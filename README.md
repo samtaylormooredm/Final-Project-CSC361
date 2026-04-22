@@ -8,7 +8,7 @@ An interactive data visualization project exploring how concern about global war
 
 The full report detailing methodology, design decisions, accessibility considerations, and user testing can be found here:
 
-[Final Project - Write Up](./Final Project - Write Up(1).pdf)
+[Final Project Write-Up](./Final_Project_Write_Up.pdf)
 
 ---
 
